@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusVolt • Information</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/campusvolt-information.css">
+  <style>
+    
+  </style>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a class="brand" href="#" aria-label="CampusVolt home">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" style="stop-color: var(--accent-green)"/>
+              <stop offset="1" stop-color="#2fa58c"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2.5 4.5 6.6v8.2c0 7.2 4.7 12.4 11.5 14.7 6.8-2.3 11.5-7.5 11.5-14.7V6.6L16 2.5z" fill="url(#logo-gradient)"/>
+          <path d="M17.5 7.5 11 17h4.2l-.8 7L21 14.5h-4.4l.9-7z" fill="#0f1614"/>
+        </svg>
+        <span>CampusVolt</span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="../html/campusvolt-dashboard.html">Dashboard</a></li>
+          <li><a href="../html/campusvolt-information.html" aria-current="page">Information</a></li>
+          <li><a href="../html/campusvolt-settings.html">Settings</a></li>
+        </ul>
+      </nav>
+
+      <div class="live-pill" id="connection-status" role="status">
+        <span class="live-pill__dot" id="connection-dot" aria-hidden="true"></span>
+        <span>Live • <span id="connection-name">CampusVolt-AP</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <section class="page-header">
+      <p class="page-header__eyebrow">About this station</p>
+      <h1 class="page-header__title">How CampusVolt keeps your devices charged</h1>
+      <p class="page-header__subtitle">A quick look at where the power comes from and how to use each port.</p>
+    </section>
+
+    <!-- ================= HERO ================= -->
+    <section class="card hero" aria-labelledby="hero-heading">
+      <div class="hero__copy">
+        <h2 class="hero__title" id="hero-heading">An off-grid, solar-powered charging kiosk</h2>
+        <p class="hero__text">
+          CampusVolt harvests sunlight through rooftop solar panels, stores it in an on-site battery bank, and shares it across nine charging points. It keeps working even when the campus grid doesn't — no outlet, no problem.
+        </p>
+      </div>
+
+      <dl class="specs">
+        <div class="spec">
+          <dt>Solar array</dt>
+          <dd id="spec-solar-array-value">2 × 585W</dd>
+        </div>
+        <div class="spec">
+          <dt>Battery</dt>
+          <dd id="spec-battery-value">LiFePO4 24V 200Ah</dd>
+        </div>
+        <div class="spec">
+          <dt>Charging points</dt>
+          <dd id="spec-charging-points-value">9 total</dd>
+        </div>
+        <div class="spec">
+          <dt>Local Wi-Fi range</dt>
+          <dd id="spec-wifi-range-value">20–30 m</dd>
+        </div>
+      </dl>
+    </section>
+
+    <!-- ================= HOW IT WORKS ================= -->
+    <section class="how" aria-labelledby="how-heading">
+      <h2 class="section-title" id="how-heading">How it works</h2>
+
+      <ul class="steps">
+        <li class="card step">
+          <div class="step__icon">
+            <!-- Sun -->
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="4"/>
+              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+            </svg>
+          </div>
+          <h3 class="step__title">1. Sunlight in</h3>
+          <p class="step__text">Solar panels convert sunlight into DC power throughout the day.</p>
+        </li>
+
+        <li class="card step">
+          <div class="step__icon">
+            <!-- Battery -->
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="7" y="5" width="10" height="17" rx="2"/>
+              <path d="M10 2h4"/>
+              <path d="M12 12v6"/>
+            </svg>
+          </div>
+          <h3 class="step__title">2. Stored safely</h3>
+          <p class="step__text">An MPPT controller stores the energy in the LiFePO4 battery bank.</p>
+        </li>
+
+        <li class="card step">
+          <div class="step__icon">
+            <!-- Lightning bolt -->
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <path d="M13 2 4 14h7l-1 8 9-12h-7l1-8z"/>
+            </svg>
+          </div>
+          <h3 class="step__title">3. Shared intelligently</h3>
+          <p class="step__text">Power is balanced across all nine ports based on demand and battery level.</p>
+        </li>
+
+        <li class="card step">
+          <div class="step__icon">
+            <!-- Mobile phone -->
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <rect x="7" y="2" width="10" height="20" rx="2.5"/>
+              <path d="M11 18h2"/>
+            </svg>
+          </div>
+          <h3 class="step__title">4. Your device charges</h3>
+          <p class="step__text">Plug into any open port and charge — the station handles the rest.</p>
+        </li>
+      </ul>
+    </section>
+
+    <!-- ================= INFO TABLES ================= -->
+    <section class="info" aria-label="Port guidance and station limits">
+
+      <article class="card info-card">
+        <h2 class="info-card__title">Which port should I use?</h2>
+        <dl class="info-list">
+          <div class="info-list__row">
+            <dt>Laptop with a wall plug</dt>
+            <dd>AC outlet</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Older Android phone</dt>
+            <dd>Micro USB cable</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Newer phone, tablet, laptop</dt>
+            <dd>USB-C cable or port</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>iPhone / iPad</dt>
+            <dd>Lightning cable</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Any Qi-enabled phone</dt>
+            <dd>Wireless pad</dd>
+          </div>
+        </dl>
+      </article>
+
+      <article class="card info-card info-card--tip">
+        <h2 class="info-card__title">Good to know</h2>
+        <dl class="info-list">
+          <div class="info-list__row">
+            <dt>Max load per port</dt>
+            <dd>150 W</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Not for</dt>
+            <dd>Lab equipment, appliances</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Overload response</dt>
+            <dd>Auto-isolated, others stay on</dd>
+          </div>
+          <div class="info-list__row">
+            <dt>Weatherproofing</dt>
+            <dd>IP65 enclosure</dd>
+          </div>
+        </dl>
+      </article>
+
+    </section>
+
+  </main>
+
+</body>
+</html>

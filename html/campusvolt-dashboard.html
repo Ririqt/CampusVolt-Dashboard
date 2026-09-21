@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusVolt • CEA Station 01</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/campusvolt-dashboard.css"> 
+  <script type="module" src="../js/campusvolt-dashboard.js"></script>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a class="brand" href="#" aria-label="CampusVolt home">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#b7e36a"/>
+              <stop offset="1" stop-color="#2fa58c"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2.5 4.5 6.6v8.2c0 7.2 4.7 12.4 11.5 14.7 6.8-2.3 11.5-7.5 11.5-14.7V6.6L16 2.5z" fill="url(#logo-gradient)"/>
+          <path d="M17.5 7.5 11 17h4.2l-.8 7L21 14.5h-4.4l.9-7z" fill="#0f1614"/>
+        </svg>
+        <span>CampusVolt</span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="#" aria-current="page">Dashboard</a></li>
+          <li><a href="../html/campusvolt-information.html">Information</a> </li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+
+      <div class="live-pill" id="connection-status" role="status">
+        <span class="live-pill__dot" id="connection-dot" aria-hidden="true"></span>
+        <span>Live • <span id="connection-name">CampusVolt-AP</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <section class="page-header">
+      <p class="page-header__station" id="station-name">CEA Station 01</p>
+      <h1 class="page-header__title" id="station-headline">Hello! the station is running well.</h1>
+      <p class="page-header__subtitle">Monitor our charging station in real time!</p>
+    </section>
+
+    <!-- ================= TOP METRIC CARDS ================= -->
+    <section class="metrics" aria-label="Station overview">
+
+      <!-- Battery bank -->
+      <article class="card card--battery">
+        <h2 class="card__title">Battery Bank</h2>
+        <p class="card__subtitle">LiFePO4 • 12V 100Ah</p>
+
+        <div class="battery__body">
+          <!--
+            Update the ring from JavaScript with:
+            document.getElementById("battery-ring").style.setProperty("--progress", 72);
+          -->
+          <div class="ring" role="img" aria-label="Battery charge level">
+            <svg class="ring__svg" viewBox="0 0 84 84" aria-hidden="true" focusable="false">
+              <circle class="ring__track" cx="42" cy="42" r="36"/>
+              <circle class="ring__value" id="battery-ring" cx="42" cy="42" r="36" pathLength="100" style="--progress: 85"/>
+            </svg>
+            <div class="ring__label">
+              <span class="ring__percent"><span id="battery-percent-value">85</span>%</span>
+              <span class="ring__caption">CHARGED</span>
+            </div>
+          </div>
+
+          <ul class="battery__stats">
+            <li><span class="muted">Status:</span> <strong id="battery-status-value">Charging</strong></li>
+            <li><span class="muted">Est. full:</span> <strong id="battery-est-full-value">1h 40m</strong></li>
+            <li><span class="muted">Runtime left:</span> <strong id="battery-runtime-value">~9h</strong></li>
+          </ul>
+        </div>
+      </article>
+
+      <!-- Solar energy harvest -->
+      <article class="card card--solar">
+        <h2 class="card__title">Solar energy harvest</h2>
+        <p class="card__subtitle">Total power generated right now</p>
+
+        <p class="solar__power"><span id="solar-power-value">245</span> W</p>
+
+        <dl class="solar__stats">
+          <div>
+            <dt>Today so far</dt>
+            <dd><span id="solar-today-value">1.8</span> kWh</dd>
+          </div>
+          <div>
+            <dt>Panel output</dt>
+            <dd><span id="solar-panel-count-value">2</span> × <span id="solar-panel-watts-value">200</span>W</dd>
+          </div>
+          <div>
+            <dt>Peak today</dt>
+            <dd><span id="solar-peak-value">410</span> W</dd>
+          </div>
+        </dl>
+      </article>
+
+      <!-- Weather forecast -->
+      <article class="card card--weather">
+        <h2 class="card__title">Weather forecast</h2>
+
+        <div class="weather__now">
+          <p class="weather__temp"><span id="weather-temp-value">35</span>°C</p>
+          <div class="weather__meta">
+            <p id="weather-condition">Sunny</p>
+            <p id="weather-location">Manila, PUP CEA</p>
+          </div>
+        </div>
+
+        <dl class="weather__rows">
+          <div class="weather__row">
+            <dt>Expected solar</dt>
+            <dd id="weather-expected-solar">High</dd>
+          </div>
+          <div class="weather__row">
+            <dt>Source</dt>
+            <dd id="weather-source">OpenWeatherAPI</dd>
+          </div>
+        </dl>
+      </article>
+    </section>
+
+    <!-- ================= SUMMARY STRIP ================= -->
+    <section class="summary" aria-label="Today at a glance">
+      <article class="card">
+        <p class="stat__value" id="devices-charged-value">37</p>
+        <p class="stat__label">Devices charged today</p>
+      </article>
+
+      <article class="card">
+        <p class="stat__value"><span id="energy-delivered-value">3.2</span> kWh</p>
+        <p class="stat__label">Energy delivered today</p>
+      </article>
+
+      <article class="card">
+        <p class="stat__value"><span id="ports-active-value">4</span> / <span id="ports-total-value">9</span></p>
+        <p class="stat__label">Ports currently active</p>
+      </article>
+    </section>
+
+    <!-- ================= CHARGING PORTS ================= -->
+    <section class="ports" aria-labelledby="ports-heading">
+      <div class="ports__header">
+        <h2 class="ports__title" id="ports-heading">Charging ports</h2>
+        <p class="ports__note">Power is balanced automatically, nothing for you to set!</p>
+      </div>
+
+      <!--
+        Toggle a port's state from JavaScript by swapping the pill class and text:
+        pill--available  →  "Available"
+        pill--in-use     →  "In use"
+      -->
+      <div class="ports__grid">
+
+        <article class="card port-card">
+          <h3 class="port-card__title">Outlets</h3>
+          <ul class="port-list">
+            <li><span>Outlet 1</span> <span class="pill pill--available" id="outlet-1-status">Available</span></li>
+            <li><span>Outlet 2</span> <span class="pill pill--in-use" id="outlet-2-status">In use</span></li>
+            <li><span>Outlet 3</span> <span class="pill pill--available" id="outlet-3-status">Available</span></li>
+          </ul>
+        </article>
+
+        <article class="card port-card">
+          <h3 class="port-card__title">DC cables</h3>
+          <ul class="port-list">
+            <li><span>Type-C</span> <span class="pill pill--in-use" id="dc-type-c-status">In use</span></li>
+            <li><span>Micro USB</span> <span class="pill pill--available" id="dc-micro-usb-status">Available</span></li>
+            <li><span>Lightning</span> <span class="pill pill--available" id="dc-lightning-status">Available</span></li>
+          </ul>
+        </article>
+
+        <article class="card port-card">
+          <h3 class="port-card__title">USB ports</h3>
+          <ul class="port-list">
+            <li><span>USB-A</span> <span class="pill pill--in-use" id="usb-a-status">In use</span></li>
+            <li><span>USB-C</span> <span class="pill pill--available" id="usb-c-status">Available</span></li>
+          </ul>
+        </article>
+
+        <article class="card port-card">
+          <h3 class="port-card__title">Wireless</h3>
+          <ul class="port-list">
+            <li><span>Charging pad</span> <span class="pill pill--in-use" id="wireless-pad-status">In use</span></li>
+          </ul>
+        </article>
+
+      </div>
+    </section>
+
+  </main>
+
+</body>
+</html>
