@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampusVolt • The Team</title>
+
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="../css/team.css">
+</head>
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a class="brand" href="../html/dashboard.html" aria-label="CampusVolt Home">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#a3e681"/>
+              <stop offset="1" stop-color="#2fa58c"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2.5 4.5 6.6v8.2c0 7.2 4.7 12.4 11.5 14.7 6.8-2.3 11.5-7.5 11.5-14.7V6.6L16 2.5z" fill="url(#logo-gradient)"/>
+          <path d="M17.5 7.5 11 17h4.2l-.8 7L21 14.5h-4.4l.9-7z" fill="#0f1614"/>
+        </svg>
+        <span>CampusVolt</span>
+      </a>
+
+      <nav aria-label="Primary Navigation">
+        <ul class="nav-links">
+          <li><a href="../html/dashboard.html">Dashboard</a></li>
+          <li><a href="../html/information.html">Information</a></li>
+          <li><a href="../html/monitoring.html">Monitoring</a></li>
+          <li><a href="#" aria-current="page">The Team</a></li>
+        </ul>
+      </nav>
+
+      <div class="live-pill" id="connection-status" role="status">
+        <span class="live-pill__dot" id="connection-dot" aria-hidden="true"></span>
+        <span>Live • <span id="connection-name">CampusVolt-AP</span></span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= PAGE HEADER ================= -->
+    <section class="page-header">
+      <p class="page-header__eyebrow">Project Authors</p>
+      <h1 class="page-header__title">Meet the team behind CampusVolt</h1>
+      <p class="page-header__subtitle">
+        Developed as a senior capstone project for the College of Engineering and Architecture, combining custom IoT hardware with responsive web technologies.
+      </p>
+    </section>
+
+    <!-- ================= TEAM GRID SECTION ================= -->
+    <section class="team-grid" aria-label="CampusVolt Team Members">
+
+      <!-- Member 1 -->
+      <article class="team-card">
+        <div class="team-card__avatar" aria-hidden="true">MR</div>
+        <h2 class="team-card__name">Clarice I. David</h2>
+        <span class="team-card__role">Lead Firmware & IoT Systems</span>
+        <p class="team-card__bio">
+          Engineered the ESP32 micro-controller architecture, sensor telemetry pipelines, automated safety cutoffs, and lightweight MQTT broker communications.
+        </p>
+        <div class="team-card__socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
+        </div>
+      </article>
+
+      <!-- Member 2 -->
+      <article class="team-card">
+        <div class="team-card__avatar" aria-hidden="true">MC</div>
+        <h2 class="team-card__name">Michell Ann N. Ravago</h2>
+        <span class="team-card__role">Full-Stack & UI/UX Developer</span>
+        <p class="team-card__bio">
+          Crafted the responsive client dashboard, real-time SVG telemetry gauges, dark-mode design system, and client-side WebSocket synchronization logic.
+        </p>
+        <div class="team-card__socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
+        </div>
+      </article>
+
+      <!-- Member 3 -->
+      <article class="team-card">
+        <div class="team-card__avatar" aria-hidden="true">JL</div>
+        <h2 class="team-card__name">Mharc Reinald M. Rigos</h2>
+        <span class="team-card__role">Hardware & Power Systems</span>
+        <p class="team-card__bio">
+          Designed the LiFePO4 battery management system, MPPT solar harvest circuitry, physical kiosk enclosure layout, and electrical safety protections.
+        </p>
+        <div class="team-card__socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
+        </div>
+      </article>
+
+      <!-- Member 4 -->
+      <article class="team-card">
+        <div class="team-card__avatar" aria-hidden="true">JL</div>
+        <h2 class="team-card__name">Menard Arnel U. Sabugo</h2>
+        <span class="team-card__role">Hardware & Power Systems</span>
+        <p class="team-card__bio">
+          Designed the LiFePO4 battery management system, MPPT solar harvest circuitry, physical kiosk enclosure layout, and electrical safety protections.
+        </p>
+        <div class="team-card__socials">
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ================= SUPPORT / ACKNOWLEDGMENTS FOOTER ================= -->
+    <footer class="support-footer" aria-label="Support and Acknowledgments">
+      <!-- Left Column: Acknowledgments -->
+      <div class="support-footer__col">
+        <h2 class="support-footer__title">Special Thanks</h2>
+        <p class="support-footer__text">Thesis Advisor: Engr. [Placeholder name]</p>
+      </div>
+
+      <!-- Right Column: Support -->
+      <div class="support-footer__col support-footer__col--support">
+        <div class="support-footer__info">
+          <h2 class="support-footer__title">Station Support</h2>
+          <p class="support-footer__text">Notice a broken port or blank screen? Contact the CEA department.</p>
+        </div>
+        <a href="mailto:cea-support@campusvolt.edu" class="support-footer__btn">Contact Support</a>
+      </div>
+    </footer>
+
+  </main>
+
+</body>
+</html>
