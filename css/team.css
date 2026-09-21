@@ -162,7 +162,7 @@ body {
 .page-header__title {
   color: var(--text-main);
   font-size: clamp(1.75rem, 3vw, 2.25rem);
-  font-weight: 700;
+  font-weight: 500;
   line-height: 1.2;
   letter-spacing: -0.02em;
   margin-bottom: 10px;

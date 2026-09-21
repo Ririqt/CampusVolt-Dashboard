@@ -18,6 +18,7 @@
       --teal: #2fa58c;
       --amber: #f5c451;
       --dev-blue: #3b82f6;
+      --accent-green: #a3e681;
 
       /* Ring */
       --ring-track: #263630;
@@ -212,7 +213,7 @@
     .page-header__station {
       font-size: 12px;
       font-weight: 500;
-      color: var(--accent);
+      color: var(--accent-green);
     }
 
     .page-header__title {
