@@ -5,13 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CampusVolt • The Team</title>
 
-  <!-- Google Fonts: Inter -->
+  <!-- Google Fonts: Inter & Space Grotesk -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
 
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="../css/team.css">
+  <script type="module" src="../js/modules/kiosk-preferences.js"></script>
 </head>
 <body>
 
@@ -22,7 +23,7 @@
         <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
           <defs>
             <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#a3e681"/>
+              <stop offset="0" stop-color="#a8e062"/>
               <stop offset="1" stop-color="#2fa58c"/>
             </linearGradient>
           </defs>
@@ -34,111 +35,278 @@
 
       <nav aria-label="Primary Navigation">
         <ul class="nav-links">
-          <li><a href="../html/dashboard.html">Dashboard</a></li>
-          <li><a href="../html/information.html">Information</a></li>
-          <li><a href="../html/monitoring.html">Monitoring</a></li>
-          <li><a href="#" aria-current="page">The Team</a></li>
+          <li><a href="../html/dashboard.html" data-i18n="nav_dashboard">Dashboard</a></li>
+          <li><a href="../html/information.html" data-i18n="nav_information">Information</a></li>
+          <li><a href="../html/settings.html" data-i18n="nav_settings">Settings</a></li>
+          <li><a href="../html/team.html" aria-current="page" data-i18n="nav_team">The Team</a></li>
         </ul>
       </nav>
 
       <div class="live-pill" id="connection-status" role="status">
         <span class="live-pill__dot" id="connection-dot" aria-hidden="true"></span>
-        <span>Live • <span id="connection-name">CampusVolt-AP</span></span>
+        <span data-i18n="nav_live">Live • <span id="connection-name">CampusVolt-AP</span></span>
       </div>
     </div>
   </header>
 
   <main class="container">
 
-    <!-- ================= PAGE HEADER ================= -->
-    <section class="page-header">
-      <p class="page-header__eyebrow">Project Authors</p>
-      <h1 class="page-header__title">Meet the team behind CampusVolt</h1>
-      <p class="page-header__subtitle">
-        Developed as a senior capstone project for the College of Engineering and Architecture, combining custom IoT hardware with responsive web technologies.
-      </p>
-    </section>
-
-    <!-- ================= TEAM GRID SECTION ================= -->
-    <section class="team-grid" aria-label="CampusVolt Team Members">
-
-      <!-- Member 1 -->
-      <article class="team-card">
-        <div class="team-card__avatar" aria-hidden="true">MR</div>
-        <h2 class="team-card__name">Clarice I. David</h2>
-        <span class="team-card__role">Lead Firmware & IoT Systems</span>
-        <p class="team-card__bio">
-          Engineered the ESP32 micro-controller architecture, sensor telemetry pipelines, automated safety cutoffs, and lightweight MQTT broker communications.
+    <!-- ================= PAGE HEADER (FIGMA 4. THE TEAM) ================= -->
+    <section class="team-header-section" aria-label="About the Team">
+      <div class="team-header__content">
+        <p class="team-header__eyebrow" data-i18n="team_eyebrow">The Team</p>
+        <h1 class="team-header__title">
+          <span data-i18n="team_title_main">Four engineers.</span> <span class="text-teal" data-i18n="team_title_teal">One very</span> <span class="text-amber" data-i18n="team_title_amber">sunny idea.</span>
+        </h1>
+        <p class="team-header__subtitle" data-i18n="team_subtitle">
+          We're computer engineering students at the Polytechnic University of the Philippines who got tired of hunting for a working outlet, so we built a kiosk that charges on sunlight.
         </p>
-        <div class="team-card__socials">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
-        </div>
-      </article>
-
-      <!-- Member 2 -->
-      <article class="team-card">
-        <div class="team-card__avatar" aria-hidden="true">MC</div>
-        <h2 class="team-card__name">Michell Ann N. Ravago</h2>
-        <span class="team-card__role">Full-Stack & UI/UX Developer</span>
-        <p class="team-card__bio">
-          Crafted the responsive client dashboard, real-time SVG telemetry gauges, dark-mode design system, and client-side WebSocket synchronization logic.
-        </p>
-        <div class="team-card__socials">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
-        </div>
-      </article>
-
-      <!-- Member 3 -->
-      <article class="team-card">
-        <div class="team-card__avatar" aria-hidden="true">JL</div>
-        <h2 class="team-card__name">Mharc Reinald M. Rigos</h2>
-        <span class="team-card__role">Hardware & Power Systems</span>
-        <p class="team-card__bio">
-          Designed the LiFePO4 battery management system, MPPT solar harvest circuitry, physical kiosk enclosure layout, and electrical safety protections.
-        </p>
-        <div class="team-card__socials">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
-        </div>
-      </article>
-
-      <!-- Member 4 -->
-      <article class="team-card">
-        <div class="team-card__avatar" aria-hidden="true">JL</div>
-        <h2 class="team-card__name">Menard Arnel U. Sabugo</h2>
-        <span class="team-card__role">Hardware & Power Systems</span>
-        <p class="team-card__bio">
-          Designed the LiFePO4 battery management system, MPPT solar harvest circuitry, physical kiosk enclosure layout, and electrical safety protections.
-        </p>
-        <div class="team-card__socials">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">GitHub</a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="team-card__social-link">LinkedIn</a>
-        </div>
-      </article>
-
-    </section>
-
-    <!-- ================= SUPPORT / ACKNOWLEDGMENTS FOOTER ================= -->
-    <footer class="support-footer" aria-label="Support and Acknowledgments">
-      <!-- Left Column: Acknowledgments -->
-      <div class="support-footer__col">
-        <h2 class="support-footer__title">Special Thanks</h2>
-        <p class="support-footer__text">Thesis Advisor: Engr. [Placeholder name]</p>
       </div>
 
-      <!-- Right Column: Support -->
-      <div class="support-footer__col support-footer__col--support">
-        <div class="support-footer__info">
-          <h2 class="support-footer__title">Station Support</h2>
-          <p class="support-footer__text">Notice a broken port or blank screen? Contact the CEA department.</p>
+      <!-- 2x2 Stats Grid -->
+      <div class="team-stats-grid" aria-label="Project Statistics">
+        <div class="stat-box">
+          <div class="stat-box__val">4</div>
+          <div class="stat-box__label" data-i18n="stat_members">Team members</div>
         </div>
-        <a href="mailto:cea-support@campusvolt.edu" class="support-footer__btn">Contact Support</a>
+        <div class="stat-box">
+          <div class="stat-box__val">BSCpE</div>
+          <div class="stat-box__label" data-i18n="stat_school">PUP, Sta. Mesa</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box__val">6</div>
+          <div class="stat-box__label" data-i18n="stat_ports">Charging points built</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box__val">2026-2027</div>
+          <div class="stat-box__label" data-i18n="stat_thesis">Thesis year</div>
+        </div>
       </div>
-    </footer>
+    </section>
+
+    <!-- ================= TEAM MEMBERS GRID ================= -->
+    <section class="team-cards-grid" aria-label="CampusVolt Authors">
+
+      <!-- Member 1: Clarice I. David -->
+      <article class="member-card">
+        <div class="member-card__portrait">
+          <span class="member-card__badge-num">01</span>
+          <span class="member-card__badge-photo">Photo</span>
+          <div class="member-card__avatar-silhouette" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="member-card__body">
+          <h2 class="member-card__name">Clarice I. David</h2>
+          <span class="member-card__role-pill">UI/UX Designer, Software Engineer</span>
+          <p class="member-card__subsystem">Subsystem · System Integration</p>
+          <p class="member-card__desc">Keeps every subsystem talking to the others.</p>
+          <div class="member-card__tags">
+            <span class="member-tag">Dashboard</span>
+            <span class="member-tag">UI</span>
+            <span class="member-tag">APIs</span>
+          </div>
+          <div class="member-card__flavor">
+            <div class="flavor-row">
+              <span class="flavor-row__label">Runs on</span>
+              <span class="flavor-row__val">Iced coffee</span>
+            </div>
+            <div class="flavor-bar-track">
+              <div class="flavor-bar-fill" style="width: 90%;"></div>
+            </div>
+          </div>
+          <div class="member-card__socials">
+            <a href="mailto:clarice.david@campusvolt.edu" class="social-icon-btn" aria-label="Email Clarice I. David">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Member 2: Michell Ann N. Ravago -->
+      <article class="member-card">
+        <div class="member-card__portrait">
+          <span class="member-card__badge-num">02</span>
+          <span class="member-card__badge-photo">Photo</span>
+          <div class="member-card__avatar-silhouette" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="member-card__body">
+          <h2 class="member-card__name">Michell Ann N. Ravago</h2>
+          <span class="member-card__role-pill">Hardware Engineer</span>
+          <p class="member-card__subsystem">Subsystem · Energy Generation</p>
+          <p class="member-card__desc">Turns sunlight into stored power.</p>
+          <div class="member-card__tags">
+            <span class="member-tag">Solar</span>
+            <span class="member-tag">Charge control</span>
+            <span class="member-tag">Wiring</span>
+          </div>
+          <div class="member-card__flavor">
+            <div class="flavor-row">
+              <span class="flavor-row__label">Runs on</span>
+              <span class="flavor-row__val">Cobra</span>
+            </div>
+            <div class="flavor-bar-track">
+              <div class="flavor-bar-fill" style="width: 84%;"></div>
+            </div>
+          </div>
+          <div class="member-card__socials">
+            <a href="mailto:michell.ravago@campusvolt.edu" class="social-icon-btn" aria-label="Email Michell Ann N. Ravago">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Member 3: Mharc Reinald M. Rigos -->
+      <article class="member-card">
+        <div class="member-card__portrait">
+          <span class="member-card__badge-num">03</span>
+          <span class="member-card__badge-photo">Photo</span>
+          <div class="member-card__avatar-silhouette" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="member-card__body">
+          <h2 class="member-card__name">Mharc Reinald M. Rigos</h2>
+          <span class="member-card__role-pill member-card__role-pill--amber">Project Lead, Software Engineer</span>
+          <p class="member-card__subsystem">Subsystem · Control & Monitoring</p>
+          <p class="member-card__desc">Teaches the kiosk to think for itself.</p>
+          <div class="member-card__tags">
+            <span class="member-tag">ESP32</span>
+            <span class="member-tag">Edge-AI</span>
+            <span class="member-tag">Fuzzy logic</span>
+          </div>
+          <div class="member-card__flavor">
+            <div class="flavor-row">
+              <span class="flavor-row__label">Runs on</span>
+              <span class="flavor-row__val">Late-night debugging</span>
+            </div>
+            <div class="flavor-bar-track">
+              <div class="flavor-bar-fill" style="width: 96%;"></div>
+            </div>
+          </div>
+          <div class="member-card__socials">
+            <a href="mailto:mharc.rigos@campusvolt.edu" class="social-icon-btn" aria-label="Email Mharc Reinald M. Rigos">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Member 4: Menard Arnel U. Sabugo -->
+      <article class="member-card">
+        <div class="member-card__portrait">
+          <span class="member-card__badge-num">04</span>
+          <span class="member-card__badge-photo">Photo</span>
+          <div class="member-card__avatar-silhouette" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+            </svg>
+          </div>
+        </div>
+        <div class="member-card__body">
+          <h2 class="member-card__name">Menard Arnel U. Sabugo</h2>
+          <span class="member-card__role-pill">Hardware Engineer</span>
+          <p class="member-card__subsystem">Subsystem · Dashboard & Cloud</p>
+          <p class="member-card__desc">Makes every number easy to read.</p>
+          <div class="member-card__tags">
+            <span class="member-tag">Solar</span>
+            <span class="member-tag">Charge Control</span>
+            <span class="member-tag">Wiring</span>
+          </div>
+          <div class="member-card__flavor">
+            <div class="flavor-row">
+              <span class="flavor-row__label">Runs on</span>
+              <span class="flavor-row__val">Richel!</span>
+            </div>
+            <div class="flavor-bar-track">
+              <div class="flavor-bar-fill" style="width: 88%;"></div>
+            </div>
+          </div>
+          <div class="member-card__socials">
+            <a href="mailto:menard.sabugo@campusvolt.edu" class="social-icon-btn" aria-label="Email Menard Arnel U. Sabugo">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+            </a>
+            <a href="https://github.com" target="_blank" rel="noopener noreferrer" class="social-icon-btn" aria-label="GitHub profile">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- ================= MILESTONES (HOW WE GOT HERE) ================= -->
+    <section class="milestones-section" aria-label="Project Milestones">
+      <h2 class="milestones-title" data-i18n="team_how_title">How we got here</h2>
+      <div class="milestones-grid">
+        <div class="milestone-card">
+          <div class="milestone-card__header">
+            <span class="milestone-dot" aria-hidden="true"></span>
+            <h3 class="milestone-card__title" data-i18n="ms_problem_title">Spotted the problem</h3>
+          </div>
+          <p class="milestone-card__desc" data-i18n="ms_problem_desc">Long outlet queues and brownouts on campus.</p>
+        </div>
+
+        <div class="milestone-card">
+          <div class="milestone-card__header">
+            <span class="milestone-dot" aria-hidden="true"></span>
+            <h3 class="milestone-card__title" data-i18n="ms_design_title">Designed the system</h3>
+          </div>
+          <p class="milestone-card__desc" data-i18n="ms_design_desc">Solar, storage, and nine charging points.</p>
+        </div>
+
+        <div class="milestone-card">
+          <div class="milestone-card__header">
+            <span class="milestone-dot" aria-hidden="true"></span>
+            <h3 class="milestone-card__title" data-i18n="ms_built_title">Built the kiosk</h3>
+          </div>
+          <p class="milestone-card__desc" data-i18n="ms_built_desc">Hardware, firmware, and dashboard together.</p>
+        </div>
+
+        <div class="milestone-card">
+          <div class="milestone-card__header">
+            <span class="milestone-dot" aria-hidden="true"></span>
+            <h3 class="milestone-card__title" data-i18n="ms_test_title">Put it to the test</h3>
+          </div>
+          <p class="milestone-card__desc" data-i18n="ms_test_desc">Field testing at PUP College of Engineering.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= CTA BANNER ================= -->
+    <section class="team-cta-banner" aria-label="Get in touch">
+      <div class="team-cta__content">
+        <h2 class="team-cta__title" data-i18n="cta_title">Want to know more about CampusVolt?</h2>
+        <p class="team-cta__subtitle" data-i18n="cta_subtitle">Questions, feedback, or collaboration — we'd love to hear from you.</p>
+      </div>
+      <button type="button" class="team-cta__btn" id="btn-say-hello" data-i18n="cta_btn">Say hello</button>
+    </section>
 
   </main>
+
+  <script>
+    document.getElementById("btn-say-hello")?.addEventListener("click", () => {
+      window.location.href = "mailto:campusvolt@pup.edu.ph?subject=CampusVolt%20Inquiry%20from%20Kiosk";
+    });
+  </script>
 
 </body>
 </html>

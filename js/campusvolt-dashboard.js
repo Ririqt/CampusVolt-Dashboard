@@ -1,8 +1,19 @@
-// Import the functions you need from the SDKs you need
+// CampusVolt Dashboard Main Controller
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
+import { initChargingPorts } from "./modules/charging-controller.js";
+import { kioskPreferences } from "./modules/kiosk-preferences.js";
 
-// Your web app's Firebase configuration
+// -------------------------------------------------------------
+// 1. Initialize Modular Charging Ports Component (Figma Design)
+// -------------------------------------------------------------
+document.addEventListener("DOMContentLoaded", () => {
+  initChargingPorts("charging-ports-container");
+});
+
+// -------------------------------------------------------------
+// 2. Firebase Live Realtime Telemetry
+// -------------------------------------------------------------
 const firebaseConfig = {
   apiKey: "AIzaSyDTVOxATLW_ScNwUFTf9No6EhMz_m2P2OY",
   authDomain: "campusvolt.firebaseapp.com",
@@ -16,21 +27,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const database = getDatabase(app);
 
-// 1. Create a reference pointing to the exact path in your database
+// Solar power live reference
 const solarPowerRef = ref(database, 'CampusVolt/station01/solarPower');
-
-// 2. Grab the HTML element where the number should display
 const solarPowerEl = document.getElementById("solar-power-value");
 
-// 3. Listen for changes in real-time
-onValue(solarPowerRef, (snapshot) => {
-  const data = snapshot.val(); // Extract the number from the database
-  
-  // If the data exists, update the HTML text
-  if (data !== null) {
-    solarPowerEl.innerText = data;
-    console.log("New solar power value received: " + data);
-  } else {
-    console.log("No data found at this path.");
-  }
-});
+if (solarPowerEl) {
+  onValue(solarPowerRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data !== null) {
+      solarPowerEl.innerText = data;
+      console.log("New solar power value received: " + data);
+    } else {
+      console.log("No data found at this path.");
+    }
+  });
+}

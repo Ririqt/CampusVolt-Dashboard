@@ -1,0 +1,1218 @@
+/* ==========================================================
+   CampusVolt - Charging Ports Component Styles (Figma UI/UX)
+   Modular CSS isolated from global dashboard layout.
+   ========================================================== */
+
+/* --- Font Declarations --- */
+:root {
+  --cv-font-display: 'Space Grotesk', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --cv-font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Figma Design Tokens */
+  --cv-green-accent: #a8e062;
+  --cv-green-rgb: 168, 224, 98;
+  --cv-teal-accent: #12969b;
+  --cv-amber-accent: #ffc857;
+  --cv-amber-rgb: 255, 200, 87;
+  --cv-surface-dark: #0c1d1b;
+  --cv-surface-card: #102422;
+  --cv-text-light: #eaf6f1;
+  --cv-text-muted: #9bb6b0;
+  --cv-text-dim: #5e7a75;
+  --cv-border-subtle: rgba(255, 255, 255, 0.07);
+}
+
+/* ==========================================================
+   1. Charging Ports Section Container & Header (Image 1)
+   ========================================================== */
+.charging-ports-section {
+  padding-top: 20px;
+  padding-bottom: 50px;
+}
+
+/* Header matching Figma Image 1 */
+.ports-header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 8px;
+}
+
+.ports-header__title {
+  font-family: var(--cv-font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.ports-header__subtitle {
+  font-family: var(--cv-font-body);
+  font-size: 13px;
+  color: var(--cv-text-muted);
+  margin: 0;
+}
+
+.ports-header__price-highlight {
+  color: var(--cv-text-muted);
+}
+
+/* Sub-bar matching Figma Image 1 */
+.ports-subbar {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 26px;
+  padding-bottom: 8px;
+}
+
+.ports-subbar__label {
+  font-family: var(--cv-font-display);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cv-text-light);
+  letter-spacing: 0.02em;
+}
+
+.ports-subbar__note {
+  font-family: var(--cv-font-body);
+  font-size: 11px;
+  color: var(--cv-text-dim);
+}
+
+/* ==========================================================
+   2. Categories & Port Cards Grid
+   ========================================================== */
+.ports-categories {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  margin-top: 18px;
+}
+
+.port-category {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.port-category__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding-inline: 4px;
+}
+
+.port-category__title {
+  font-family: var(--cv-font-body);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--cv-text-muted);
+  margin: 0;
+}
+
+.port-category__desc {
+  font-family: var(--cv-font-body);
+  font-size: 11px;
+  color: var(--cv-text-dim);
+}
+
+.port-category__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* ==========================================================
+   3. Port Card (Figma Faithful Implementation)
+   ========================================================== */
+.port-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.22s ease;
+  position: relative;
+  user-select: none;
+}
+
+/* Card - AVAILABLE */
+.port-card--available {
+  background: linear-gradient(135deg, rgba(var(--cv-green-rgb), 0.12) 0%, rgba(16, 36, 34, 0.96) 100%);
+  border: 1px solid rgba(var(--cv-green-rgb), 0.22);
+  cursor: pointer;
+}
+
+.port-card--available:hover {
+  transform: translateY(-3px);
+  border-color: rgba(var(--cv-green-rgb), 0.45);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45), 
+              0 0 24px rgba(var(--cv-green-rgb), 0.14);
+}
+
+.port-card--available:active {
+  transform: translateY(-1px);
+}
+
+.port-card--available:focus-visible {
+  outline: 2px solid var(--cv-green-accent);
+  outline-offset: 3px;
+}
+
+/* Card - IN USE */
+.port-card--in-use {
+  background: rgba(12, 29, 27, 0.85);
+  border: 1px solid var(--cv-border-subtle);
+  cursor: pointer;
+}
+
+.port-card--in-use:hover {
+  transform: translateY(-2px);
+  border-color: rgba(245, 196, 81, 0.35);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Icon Box */
+.port-card__icon-box {
+  width: 58px;
+  height: 58px;
+  border-radius: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.port-card--available .port-card__icon-box {
+  background: linear-gradient(135deg, var(--cv-teal-accent) 0%, rgba(127, 203, 92, 1) 100%);
+  color: #06231f;
+  box-shadow: 0 6px 18px rgba(18, 150, 155, 0.3);
+}
+
+.port-card--available:hover .port-card__icon-box {
+  transform: scale(1.05);
+}
+
+.port-card--in-use .port-card__icon-box {
+  background: rgba(var(--cv-amber-rgb), 0.14);
+  color: var(--cv-amber-accent);
+  border: 1px solid rgba(var(--cv-amber-rgb), 0.22);
+}
+
+.port-icon-svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* Card Content */
+.port-card__content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex-grow: 1;
+}
+
+.port-card__name {
+  font-family: var(--cv-font-display);
+  font-size: 21px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.01em;
+}
+
+.port-card__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Status Pill */
+.port-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 14px;
+  border-radius: 999px;
+  font-family: var(--cv-font-body);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.port-pill--available {
+  background: rgba(var(--cv-green-rgb), 0.14);
+  color: var(--cv-green-accent);
+  border: 1px solid rgba(var(--cv-green-rgb), 0.25);
+}
+
+.port-pill--in-use {
+  background: rgba(var(--cv-amber-rgb), 0.14);
+  color: var(--cv-amber-accent);
+  border: 1px solid rgba(var(--cv-amber-rgb), 0.25);
+}
+
+.port-card__timer-snippet {
+  font-family: var(--cv-font-display), monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--cv-amber-accent);
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(var(--cv-amber-rgb), 0.25);
+  padding: 2px 7px;
+  border-radius: 6px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Card Action / Chevron */
+.port-card__action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 8px;
+}
+
+.port-card__chevron {
+  font-family: var(--cv-font-display);
+  font-size: 32px;
+  font-weight: 400;
+  color: var(--cv-green-accent);
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+.port-card--available:hover .port-card__chevron {
+  transform: translateX(4px);
+}
+
+.port-card__busy-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.busy-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cv-amber-accent);
+  opacity: 0.7;
+}
+
+/* ==========================================================
+   4. Charging Modal (<dialog>)
+   ========================================================== */
+.charging-modal {
+  border: none;
+  border-radius: 24px;
+  padding: 0;
+  background: transparent;
+  max-width: 520px;
+  width: 90vw;
+  max-height: 92vh;
+  box-shadow: 0 32px 70px rgba(0, 0, 0, 0.75), 
+              0 0 40px rgba(var(--cv-green-rgb), 0.1);
+  color: var(--cv-text-light);
+  overflow: hidden;
+}
+
+.charging-modal::backdrop {
+  background: rgba(6, 16, 14, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modal-card {
+  background: #0f1c19;
+  border: 1px solid rgba(var(--cv-green-rgb), 0.25);
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+/* Base Modal Body with scrolling */
+.modal-body {
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  flex: 1 1 auto;
+  max-height: calc(92vh - 65px);
+  padding: 22px 26px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: rgba(var(--cv-green-rgb), 0.35);
+  border-radius: 999px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--cv-green-rgb), 0.65);
+}
+
+/* ==========================================================
+   4. Modal Steps Header (1 Pay — 2 Confirm — 3 Connect — 4 Charging [X])
+   ========================================================== */
+.modal-steps-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.modal-steps-list {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.modal-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--cv-font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--cv-text-dim);
+  white-space: nowrap;
+}
+
+.modal-step--active {
+  color: var(--cv-text-light);
+  font-weight: 600;
+}
+
+.modal-step--completed {
+  color: var(--cv-green-accent);
+}
+
+.step-num {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: var(--cv-text-dim);
+}
+
+.modal-step--active .step-num {
+  background: var(--cv-green-accent);
+  color: #0c1a15;
+  border-color: var(--cv-green-accent);
+  box-shadow: 0 0 10px rgba(var(--cv-green-rgb), 0.45);
+}
+
+.modal-step--completed .step-num {
+  background: rgba(var(--cv-green-rgb), 0.16);
+  color: var(--cv-green-accent);
+  border-color: rgba(var(--cv-green-rgb), 0.35);
+}
+
+.step-divider {
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 13px;
+  user-select: none;
+}
+
+.modal-close-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--cv-text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.modal-close-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.modal-close-icon-btn svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ==========================================================
+   5. Step 1: Select Payment Method (Figma Screenshot 1)
+   ========================================================== */
+.modal-body--pay-select {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.port-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.modal-port-name {
+  font-family: var(--cv-font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+  margin: 0;
+}
+
+.port-status-pill {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.port-status-pill--available {
+  background: rgba(var(--cv-green-rgb), 0.14);
+  color: var(--cv-green-accent);
+  border: 1px solid rgba(var(--cv-green-rgb), 0.28);
+}
+
+.port-status-pill--in-use {
+  background: rgba(245, 196, 81, 0.14);
+  color: var(--cv-amber-accent);
+  border: 1px solid rgba(245, 196, 81, 0.32);
+}
+
+.modal-instructions {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--cv-text-muted);
+  margin: 0 0 22px;
+}
+
+.modal-instructions strong {
+  color: var(--cv-text-light);
+}
+
+.payment-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.payment-method-card {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 18px;
+  padding: 26px 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  color: inherit;
+}
+
+.payment-method-card:hover {
+  transform: translateY(-3px);
+  border-color: rgba(var(--cv-green-rgb), 0.35);
+  background: #1a2f2b;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+}
+
+.payment-method-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  background: linear-gradient(135deg, var(--cv-teal-accent) 0%, #a8e062 100%);
+  color: #0c1a15;
+  box-shadow: 0 6px 16px rgba(47, 165, 140, 0.3);
+}
+
+.payment-method-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.payment-method-title {
+  font-family: var(--cv-font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+  margin: 0 0 4px;
+}
+
+.payment-method-sub {
+  font-size: 11px;
+  color: var(--cv-text-muted);
+  margin: 0;
+}
+
+.modal-footer-caption {
+  font-size: 11px;
+  color: var(--cv-text-dim);
+  margin: 0;
+}
+
+/* ==========================================================
+   6. Sub-steps & Back Button (Figma Screenshot 4)
+   ========================================================== */
+.modal-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--cv-text-muted);
+  font-family: var(--cv-font-body);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 16px;
+  align-self: flex-start;
+}
+
+.modal-back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--cv-text-light);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.modal-section-title {
+  font-family: var(--cv-font-display);
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+  margin: 0 0 6px;
+}
+
+.modal-body--cash,
+.modal-body--gcash,
+.modal-body--confirm,
+.modal-body--connect {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Coins Simulator */
+.coins-simulator-box {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.coin-display-balance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.coin-balance-label {
+  font-size: 11px;
+  color: var(--cv-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.coin-balance-val {
+  font-family: var(--cv-font-display);
+  font-size: 34px;
+  font-weight: 700;
+  color: var(--cv-green-accent);
+  line-height: 1.1;
+}
+
+.coin-minutes-val {
+  font-size: 12px;
+  color: var(--cv-text-muted);
+}
+
+.coin-buttons {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.coin-btn {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  padding: 10px 6px;
+  color: var(--cv-text-light);
+  font-family: var(--cv-font-display);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.coin-btn:hover {
+  background: rgba(var(--cv-green-rgb), 0.15);
+  border-color: rgba(var(--cv-green-rgb), 0.35);
+  color: var(--cv-green-accent);
+}
+
+.coin-btn--recommended {
+  border-color: rgba(var(--cv-green-rgb), 0.3);
+  background: rgba(var(--cv-green-rgb), 0.08);
+}
+
+/* GCash Flow */
+.duration-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.duration-btn {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  color: var(--cv-text-light);
+}
+
+.duration-btn:hover {
+  border-color: rgba(var(--cv-green-rgb), 0.35);
+  background: rgba(var(--cv-green-rgb), 0.1);
+}
+
+.duration-btn--active {
+  background: rgba(var(--cv-green-rgb), 0.16);
+  border-color: var(--cv-green-accent);
+  box-shadow: 0 0 14px rgba(var(--cv-green-rgb), 0.18);
+}
+
+.duration-btn__time {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cv-text-muted);
+}
+
+.duration-btn__price {
+  font-family: var(--cv-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cv-green-accent);
+}
+
+.qr-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.qr-box {
+  width: 120px;
+  height: 120px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+}
+
+.qr-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.qr-methods {
+  display: flex;
+  gap: 8px;
+}
+
+.qr-method-pill {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--cv-text-muted);
+  border: 1px solid var(--cv-border-subtle);
+}
+
+/* Confirm Step */
+.confirm-summary-card {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.confirm-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.confirm-label {
+  color: var(--cv-text-muted);
+}
+
+.confirm-val {
+  font-family: var(--cv-font-display);
+  font-weight: 600;
+  color: var(--cv-text-light);
+}
+
+.confirm-row--total {
+  padding-top: 10px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.confirm-val--accent {
+  font-size: 18px;
+  color: var(--cv-green-accent);
+}
+
+/* Connect Step */
+.connect-illustration {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 32px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.connect-icon-pulse {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: rgba(var(--cv-green-rgb), 0.12);
+  border: 1px solid var(--cv-green-accent);
+  color: var(--cv-green-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pulse-ring 2s infinite ease-out;
+}
+
+.connect-icon-pulse svg {
+  width: 28px;
+  height: 28px;
+}
+
+@keyframes pulse-ring {
+  0% { box-shadow: 0 0 0 0 rgba(var(--cv-green-rgb), 0.4); }
+  70% { box-shadow: 0 0 0 14px rgba(var(--cv-green-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--cv-green-rgb), 0); }
+}
+
+.connect-port-badge {
+  font-family: var(--cv-font-display);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+}
+
+/* ==========================================================
+   7. Step 4: Active Charging Session Overlay (Figma Screenshot 3)
+   ========================================================== */
+.modal-body--charging {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.charging-timer-display {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 18px 0 10px;
+}
+
+.charging-timer-val {
+  font-family: var(--cv-font-display);
+  font-size: 52px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--cv-text-light);
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+.charging-timer-sub {
+  font-family: var(--cv-font-body);
+  font-size: 12px;
+  color: var(--cv-text-muted);
+  margin-top: 6px;
+}
+
+.charging-linear-progress {
+  width: 100%;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+  margin: 14px 0 24px;
+}
+
+.charging-linear-fill {
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--cv-teal-accent) 0%, var(--cv-green-accent) 60%, var(--cv-amber-accent) 100%);
+  transition: width 1s linear;
+}
+
+.charging-stats-2x2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 22px;
+}
+
+.charging-stat-box {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.charging-stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--cv-text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.charging-stat-val {
+  font-family: var(--cv-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cv-text-light);
+}
+
+.btn--done {
+  width: 100%;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+  color: var(--cv-text-light);
+  font-family: var(--cv-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  margin-bottom: 14px;
+}
+
+.btn--done:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.charging-footer-note {
+  font-size: 11px;
+  color: var(--cv-text-dim);
+  text-align: left;
+  margin: 0;
+}
+
+.btn--full {
+  width: 100%;
+  padding: 14px 22px;
+  border-radius: 12px;
+  font-family: var(--cv-font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  background: linear-gradient(135deg, var(--cv-teal-accent) 0%, rgba(127, 203, 92, 1) 100%);
+  color: #06231f;
+  box-shadow: 0 4px 16px rgba(18, 150, 155, 0.35);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn--full:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 22px rgba(18, 150, 155, 0.5);
+}
+
+/* ==========================================================
+   8. Occupied Toast Notification
+   ========================================================== */
+.port-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: #142825;
+  border: 1px solid rgba(var(--cv-amber-rgb), 0.3);
+  color: var(--cv-amber-accent);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-family: var(--cv-font-body);
+  font-size: 12px;
+  font-weight: 500;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 9999;
+}
+
+.port-toast--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+}
+
+/* ==========================================================
+   Linear Duration & Price Selector in Modal
+   ========================================================== */
+.duration-control-card {
+  background: #142421;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.duration-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.duration-slider-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cv-text-muted);
+}
+
+.duration-readout-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(var(--cv-green-rgb), 0.12);
+  border: 1px solid rgba(var(--cv-green-rgb), 0.28);
+  padding: 5px 14px;
+  border-radius: 999px;
+}
+
+.readout-time {
+  font-family: var(--cv-font-display);
+  font-size: 13px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.readout-separator {
+  color: rgba(var(--cv-green-rgb), 0.6);
+  font-size: 11px;
+}
+
+.readout-price {
+  font-family: var(--cv-font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--cv-green-accent);
+}
+
+.modal-linear-slider-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.modal-linear-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, rgba(var(--cv-green-rgb), 0.4) 0%, rgba(255, 255, 255, 0.12) 100%);
+  outline: none;
+  cursor: pointer;
+}
+
+.modal-linear-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cv-green-accent);
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(var(--cv-green-rgb), 0.6);
+  transition: transform 0.12s ease;
+}
+
+.modal-linear-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+}
+
+.modal-linear-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--cv-green-accent);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 0 10px rgba(var(--cv-green-rgb), 0.6);
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--cv-text-dim);
+  font-weight: 500;
+  padding-inline: 2px;
+}
+
+.duration-quick-presets {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.preset-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 8px 4px;
+  font-family: var(--cv-font-display);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--cv-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.preset-chip:hover {
+  background: rgba(var(--cv-green-rgb), 0.1);
+  border-color: rgba(var(--cv-green-rgb), 0.25);
+  color: var(--cv-text-light);
+}
+
+.preset-chip--active {
+  background: rgba(var(--cv-green-rgb), 0.18);
+  border-color: var(--cv-green-accent);
+  color: var(--cv-green-accent);
+  font-weight: 700;
+}
+
+/* ==========================================================
+   9. Responsive Adaptations
+   ========================================================== */
+@media (max-width: 900px) {
+  .port-category__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 680px) {
+  .ports-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px;
+  }
+
+  .ports-banner__badge {
+    align-self: flex-start;
+  }
+
+  .ports-banner__title {
+    font-size: 22px;
+  }
+
+  .port-category__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .duration-presets {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}

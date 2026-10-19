@@ -28,6 +28,13 @@
       --icon-gradient: linear-gradient(135deg, var(--accent-green) 0%, #f4d35e 100%);
       --amber: #d97757;
       --amber-border: rgba(217, 119, 87, 0.35);
+
+      /* Station metrics tokens */
+      --ring-track: #263630;
+      --solar-from: #43aa92;
+      --solar-mid: #8ed465;
+      --solar-to: #f3c85e;
+      --solar-ink: #0c1a15;
     }
 
     /* ==========================================================
@@ -198,8 +205,244 @@
       color: var(--text-muted);
     }
 
+    /* Tabular numbers */
+    [id$="-value"],
+    .solar__power,
+    .weather__temp {
+      font-variant-numeric: tabular-nums;
+    }
+
     /* ==========================================================
-       5. Hero
+       5. Station Metric Cards (Battery, Solar, Weather)
+       ========================================================== */
+    .card__title {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text-soft);
+    }
+
+    .card__subtitle {
+      margin-top: 2px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .muted {
+      color: var(--text-muted);
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap);
+      margin-top: 24px;
+    }
+
+    .metrics .card {
+      display: flex;
+      flex-direction: column;
+      min-height: 160px;
+      padding: 18px;
+    }
+
+    /* Battery */
+    .battery__body {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 12px;
+    }
+
+    .ring {
+      position: relative;
+      width: 84px;
+      height: 84px;
+      flex-shrink: 0;
+    }
+
+    .ring__svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+      transform: rotate(-90deg);
+    }
+
+    .ring__track,
+    .ring__value {
+      fill: none;
+      stroke-width: 12;
+    }
+
+    .ring__track {
+      stroke: var(--ring-track);
+    }
+
+    .ring__value {
+      stroke: var(--accent-green);
+      stroke-dasharray: var(--progress, 0) 100;
+      transition: stroke-dasharray 0.6s ease;
+    }
+
+    .ring__label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      line-height: 1.1;
+    }
+
+    .ring__percent {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .ring__caption {
+      margin-top: 2px;
+      font-size: 7px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      color: var(--text-muted);
+    }
+
+    .battery__stats {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .battery__stats strong {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* Solar harvest (gradient card) */
+    .card--solar {
+      border-color: transparent !important;
+      background: linear-gradient(115deg, var(--solar-from) 0%, var(--solar-mid) 52%, var(--solar-to) 100%) !important;
+      color: var(--solar-ink);
+    }
+
+    .card--solar .card__title {
+      font-weight: 600;
+      color: var(--solar-ink);
+    }
+
+    .card--solar .card__subtitle {
+      color: rgba(12, 26, 21, 0.62);
+    }
+
+    .solar__power {
+      margin-top: 14px;
+      font-size: 40px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .solar__stats {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .solar__stats dt {
+      font-size: 11px;
+      color: rgba(12, 26, 21, 0.68);
+    }
+
+    .solar__stats dd {
+      margin-top: 2px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .solar__stats > div:last-child {
+      text-align: right;
+    }
+
+    /* Weather */
+    .weather__now {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .weather__temp {
+      font-size: 26px;
+      font-weight: 500;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+
+    .weather__meta {
+      text-align: right;
+      font-size: 11px;
+      line-height: 1.45;
+      color: var(--text-muted);
+    }
+
+    .weather__rows {
+      margin-top: auto;
+    }
+
+    .weather__row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 9px 0;
+      border-top: 1px solid var(--divider);
+      font-size: 12px;
+    }
+
+    .weather__row:last-child {
+      padding-bottom: 0;
+    }
+
+    .weather__row dt {
+      color: var(--text-muted);
+    }
+
+    .weather__row dd {
+      font-weight: 600;
+    }
+
+    /* ==========================================================
+       6. Summary Strip
+       ========================================================== */
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--gap);
+      margin-top: 16px;
+    }
+
+    .summary .card {
+      padding: 14px 18px;
+    }
+
+    .stat__value {
+      font-size: 19px;
+      font-weight: 500;
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .stat__label {
+      margin-top: 2px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* ==========================================================
+       7. Hero
        ========================================================== */
     .hero {
       display: grid;
@@ -383,6 +626,24 @@
       }
     }
 
+    @media (max-width: 960px) {
+      .metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .metrics .card {
+        min-height: 0;
+      }
+
+      .solar__stats {
+        margin-top: 20px;
+      }
+
+      .weather__rows {
+        margin-top: 16px;
+      }
+    }
+
     @media (max-width: 900px) {
       .hero {
         grid-template-columns: 1fr;
@@ -402,6 +663,10 @@
     @media (max-width: 720px) {
       :root {
         --page-pad: 20px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
       }
 
       .navbar__inner {

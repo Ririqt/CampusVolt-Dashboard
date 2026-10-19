@@ -1,0 +1,10 @@
+# Ignore thesis paper context and Figma design export folders
+Context/
+Figma/
+
+# OS and temporary files
+.DS_Store
+Thumbs.db
+*.tmp
+.vscode/
+.idea/

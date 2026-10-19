@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusVolt • Settings</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/settings.css">
+  <script type="module" src="../js/modules/kiosk-preferences.js"></script>
+</head>
+
+<body>
+
+  <!-- ================= NAVBAR ================= -->
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a class="brand" href="../html/dashboard.html" aria-label="CampusVolt home">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#a8e062"/>
+              <stop offset="1" stop-color="#2fa58c"/>
+            </linearGradient>
+          </defs>
+          <path d="M16 2.5 4.5 6.6v8.2c0 7.2 4.7 12.4 11.5 14.7 6.8-2.3 11.5-7.5 11.5-14.7V6.6L16 2.5z" fill="url(#logo-gradient)"/>
+          <path d="M17.5 7.5 11 17h4.2l-.8 7L21 14.5h-4.4l.9-7z" fill="#0f1614"/>
+        </svg>
+        <span>CampusVolt</span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="../html/dashboard.html" data-i18n="nav_dashboard">Dashboard</a></li>
+          <li><a href="../html/information.html" data-i18n="nav_information">Information</a></li>
+          <li><a href="../html/settings.html" aria-current="page" data-i18n="nav_settings">Settings</a></li>
+          <li><a href="../html/team.html" data-i18n="nav_team">The Team</a></li>
+        </ul>
+      </nav>
+
+      <div class="live-pill" id="connection-status" role="status">
+        <span class="live-pill__dot" id="connection-dot" aria-hidden="true"></span>
+        <span data-i18n="nav_live">Live • CampusVolt-AP</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ================= PAGE HEADER (FIGMA 3. SETTINGS) ================= -->
+    <section class="page-header">
+      <p class="page-header__eyebrow" data-i18n="settings_eyebrow">Kiosk preferences</p>
+      <h1 class="page-header__title" data-i18n="settings_title">Settings</h1>
+      <p class="page-header__subtitle" data-i18n="settings_subtitle">These apply to this station's public display only.</p>
+    </section>
+
+    <!-- ================= SETTINGS CARD ================= -->
+    <section class="settings-container">
+      <div class="settings-card">
+
+        <!-- Group 1: Display & accessibility -->
+        <div class="settings-group">
+          <h2 class="settings-group__title" data-i18n="group_display">Display & accessibility</h2>
+          <div class="settings-rows">
+
+            <!-- Row 1: Screen brightness -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_brightness">Screen brightness</h3>
+                <p class="settings-row__desc" data-i18n="row_brightness_desc">Adjusts for daylight or evening use</p>
+              </div>
+              <div class="segmented-control" role="group" aria-label="Screen brightness setting">
+                <button type="button" class="segment-btn segment-btn--active" data-group="brightness" data-val="auto">Auto</button>
+                <button type="button" class="segment-btn" data-group="brightness" data-val="100">100%</button>
+                <button type="button" class="segment-btn" data-group="brightness" data-val="60">60%</button>
+              </div>
+            </div>
+
+            <!-- Row 2: Text size (Linear format) -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="font_size_title">Text size</h3>
+                <p class="settings-row__desc" data-i18n="font_size_desc">Adjust font size across the kiosk in linear format</p>
+              </div>
+              <div class="linear-font-control" role="group" aria-label="Linear text size scale">
+                <span class="font-scale-icon font-scale-icon--sm" aria-hidden="true">A</span>
+                <input 
+                  type="range" 
+                  id="font-linear-slider" 
+                  class="font-linear-slider" 
+                  min="85" 
+                  max="135" 
+                  step="5" 
+                  value="100" 
+                  aria-label="Text scale percentage"
+                >
+                <span class="font-scale-icon font-scale-icon--lg" aria-hidden="true">A</span>
+                <span class="font-scale-badge" id="font-scale-badge">100%</span>
+              </div>
+            </div>
+
+            <!-- Row 3: Language -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_language">Language</h3>
+                <p class="settings-row__desc" data-i18n="row_language_desc">Display language for this station</p>
+              </div>
+              <div class="segmented-control" id="language-control" role="group" aria-label="Station display language">
+                <button type="button" class="segment-btn segment-btn--active" data-group="language" data-val="en">English</button>
+                <button type="button" class="segment-btn" data-group="language" data-val="fil">Filipino</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Group 2: Sound & alerts -->
+        <div class="settings-group">
+          <h2 class="settings-group__title" data-i18n="group_sound">Sound & alerts</h2>
+          <div class="settings-rows">
+
+            <!-- Row 1: Confirmation sound -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_sound">Confirmation sound</h3>
+                <p class="settings-row__desc" data-i18n="row_sound_desc">Plays a short tone when charging starts</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-sound" checked aria-label="Toggle confirmation sound">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+            <!-- Row 2: Low battery alert -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_low_battery">Low battery alert</h3>
+                <p class="settings-row__desc" data-i18n="row_low_battery_desc">Shows a banner when bank drops below 20%</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-low-battery" checked aria-label="Toggle low battery alert">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Group 3: Connectivity -->
+        <div class="settings-group">
+          <h2 class="settings-group__title" data-i18n="group_connectivity">Connectivity</h2>
+          <div class="settings-rows">
+
+            <!-- Row 1: CampusVolt-AP -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title">CampusVolt-AP</h3>
+                <p class="settings-row__desc" data-i18n="row_hotspot_desc">Local hotspot, signal strength: strong</p>
+              </div>
+              <button type="button" class="btn-action" id="btn-reconnect" data-i18n="btn_reconnect">Reconnect</button>
+            </div>
+
+            <!-- Row 2: Cloud sync -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_cloud_sync">Cloud sync</h3>
+                <p class="settings-row__desc" data-i18n="row_cloud_sync_desc">Last synced with campus dashboard 2 min ago</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-cloud-sync" checked aria-label="Toggle cloud sync">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Group 4: Support -->
+        <div class="settings-group">
+          <h2 class="settings-group__title" data-i18n="group_support">Support</h2>
+          <div class="settings-rows">
+
+            <!-- Row 1: Report an issue -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_report">Report an issue</h3>
+                <p class="settings-row__desc" data-i18n="row_report_desc">Flag a port, panel, or display problem to CEA staff</p>
+              </div>
+              <button type="button" class="btn-action btn-action--danger" id="btn-report" data-i18n="btn_report">Report</button>
+            </div>
+
+            <!-- Row 2: About this station -->
+            <div class="settings-row">
+              <div class="settings-row__info">
+                <h3 class="settings-row__title" data-i18n="row_about">About this station</h3>
+                <p class="settings-row__desc" data-i18n="row_about_desc">Unit: CEA-01 · Firmware v1.4</p>
+              </div>
+              <button type="button" class="btn-action" id="btn-about" data-i18n="btn_view">View</button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Interactive Feedback Toast -->
+  <div id="settings-toast" class="settings-toast" role="status" aria-live="polite"></div>
+
+  <script type="module">
+    import { kioskPreferences } from "../js/modules/kiosk-preferences.js";
+    import { i18n } from "../js/modules/i18n.js";
+
+    const toast = document.getElementById("settings-toast");
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add("settings-toast--visible");
+      setTimeout(() => toast.classList.remove("settings-toast--visible"), 2600);
+    }
+
+    // 1. Initialize linear font slider from preferences
+    const fontSlider = document.getElementById("font-linear-slider");
+    const fontBadge = document.getElementById("font-scale-badge");
+    const currentScale = kioskPreferences.fontScale || 100;
+    if (fontSlider && fontBadge) {
+      fontSlider.value = currentScale;
+      fontBadge.textContent = `${currentScale}%`;
+      fontSlider.addEventListener("input", (e) => {
+        const val = e.target.value;
+        fontBadge.textContent = `${val}%`;
+        kioskPreferences.setFontScale(val);
+      });
+      fontSlider.addEventListener("change", (e) => {
+        showToast(`Text scale set to ${e.target.value}%`);
+      });
+    }
+
+    // 2. Initialize Language switcher
+    const currentLang = kioskPreferences.getLanguage();
+    document.querySelectorAll("[data-group='language']").forEach(btn => {
+      btn.classList.toggle("segment-btn--active", btn.dataset.val === currentLang);
+      btn.addEventListener("click", () => {
+        const chosenLang = btn.dataset.val;
+        kioskPreferences.setLanguage(chosenLang);
+        document.querySelectorAll("[data-group='language']").forEach(b => b.classList.remove("segment-btn--active"));
+        btn.classList.add("segment-btn--active");
+        showToast(chosenLang === "fil" ? "Wika: Filipino naitala" : "Language: English selected");
+      });
+    });
+
+    // 3. Brightness segmented control
+    const currentBrightness = kioskPreferences.brightness || "auto";
+    document.querySelectorAll("[data-group='brightness']").forEach(btn => {
+      btn.classList.toggle("segment-btn--active", btn.dataset.val === currentBrightness);
+      btn.addEventListener("click", () => {
+        document.querySelectorAll("[data-group='brightness']").forEach(b => b.classList.remove("segment-btn--active"));
+        btn.classList.add("segment-btn--active");
+        kioskPreferences.setBrightness(btn.dataset.val);
+        showToast(`Brightness mode: ${btn.textContent.trim()}`);
+      });
+    });
+
+    // 4. Action buttons
+    document.getElementById("btn-reconnect")?.addEventListener("click", () => {
+      showToast("Reconnected to CampusVolt-AP (Signal: -48dBm)");
+    });
+
+    document.getElementById("btn-report")?.addEventListener("click", () => {
+      showToast("Issue report modal dispatched to CEA engineering staff.");
+    });
+
+    document.getElementById("btn-about")?.addEventListener("click", () => {
+      showToast("CampusVolt Station 01 • Hardware Revision B • ESP32 IoT Engine");
+    });
+  </script>
+
+</body>
+</html>

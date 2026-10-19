@@ -470,96 +470,14 @@
     }
 
     /* ==========================================================
-       8. Charging ports
+       8. Charging ports (New Version)
+       Moved to modular stylesheet: ../css/charging-ports.css
        ========================================================== */
-    .ports {
-      margin-top: 36px;
-      padding-bottom: 40px;
-    }
-
-    .ports__header {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px 16px;
-    }
-
-    .ports__title {
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    .ports__note {
-      font-size: 12px;
-      color: var(--muted);
-      text-align: right;
-    }
-
-    .ports__grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: var(--gap);
-      margin-top: 16px;
-    }
-
-    .port-card {
-      padding: 18px 16px;
-    }
-
-    .port-card__title {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--text-soft);
-    }
-
-    .port-list {
-      margin-top: 12px;
-    }
-
-    .port-list li {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 8px 0;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    .port-list li + li {
-      border-top: 1px solid var(--divider);
-    }
-
-    /* --- Status pills --- */
-    .pill {
-      display: inline-block;
-      padding: 3px 10px;
-      border-radius: var(--radius-pill);
-      font-size: 10px;
-      font-weight: 600;
-      line-height: 1.4;
-      white-space: nowrap;
-    }
-
-    .pill--available {
-      background: var(--pill-available-bg);
-      color: var(--pill-available-text);
-    }
-
-    .pill--in-use {
-      background: var(--pill-in-use-bg);
-      color: var(--pill-in-use-text);
-    }
 
     /* ==========================================================
        9. Responsive
        ========================================================== */
-    @media (max-width: 1100px) {
-      .ports__grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-    }
+
 
     @media (max-width: 960px) {
       .metrics {
@@ -607,14 +525,6 @@
     }
 
     @media (max-width: 520px) {
-      .ports__grid {
-        grid-template-columns: 1fr;
-      }
-
-      .ports__note {
-        text-align: left;
-      }
-
       .solar__power {
         font-size: 34px;
       }
