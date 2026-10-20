@@ -272,6 +272,20 @@ body {
   backdrop-filter: blur(4px);
   color: var(--cv-text-light);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 2;
+}
+
+.member-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 15%;
+  display: block;
+  transition: transform 0.3s ease;
+}
+
+.member-card:hover .member-card__img {
+  transform: scale(1.05);
 }
 
 .member-card__badge-photo {

@@ -682,10 +682,15 @@ export class ChargingModal {
             </div>
           </div>
 
-          <!-- Done Button -->
-          <button type="button" class="btn--done" id="charging-done-btn">
-            ${t("active_btn_done")}
-          </button>
+          <!-- Action Buttons -->
+          <div class="charging-actions-group">
+            <button type="button" class="btn--done" id="charging-done-btn">
+              ${t("active_btn_done")}
+            </button>
+            <button type="button" class="btn--stop" id="charging-stop-btn">
+              Stop charging early
+            </button>
+          </div>
 
           <!-- Footnote -->
           <p class="charging-footer-note">
@@ -701,6 +706,14 @@ export class ChargingModal {
     });
     this.dialog.querySelector("#charging-done-btn")?.addEventListener("click", (e) => {
       e.stopPropagation();
+      this.close();
+    });
+    this.dialog.querySelector("#charging-stop-btn")?.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const portId = this.currentPort ? this.currentPort.id : (session ? session.portId : null);
+      if (portId) {
+        this.state.completeSession(portId, false);
+      }
       this.close();
     });
   }

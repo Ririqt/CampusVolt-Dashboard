@@ -14,6 +14,7 @@ const updatePortsTelemetry = () => {
 updatePortsTelemetry();
 portsState.addEventListener("port-status-changed", updatePortsTelemetry);
 portsState.addEventListener("session-completed", updatePortsTelemetry);
+portsState.addEventListener("ports-synced", updatePortsTelemetry);
 
 // Firebase Configuration
 const firebaseConfig = {

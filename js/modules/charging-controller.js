@@ -69,6 +69,7 @@ export class ChargingPortsController {
     this.state.addEventListener("port-status-changed", (e) => {
       const { port } = e.detail;
       this.renderer.updatePortCard(port, this.state);
+      this.renderer.updateDashboardCounters(this.state);
     });
 
     // Session tick (per-second timer countdown)
@@ -84,6 +85,12 @@ export class ChargingPortsController {
     this.state.addEventListener("session-completed", (e) => {
       const { port } = e.detail;
       this.renderer.updatePortCard(port, this.state);
+      this.renderer.updateDashboardCounters(this.state);
+    });
+
+    // Cross-tab or page sync event
+    this.state.addEventListener("ports-synced", () => {
+      this.renderer.render(this.state);
       this.renderer.updateDashboardCounters(this.state);
     });
   }
