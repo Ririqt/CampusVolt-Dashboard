@@ -14,8 +14,10 @@
     rel="stylesheet">
 
   <!-- Custom Stylesheet -->
-  <link rel="stylesheet" href="../css/team.css">
+  <link rel="stylesheet" href="../css/team.css?v=5">
   <script type="module" src="../js/modules/kiosk-preferences.js"></script>
+  <script type="module" src="../js/team-contact.js?v=1"></script>
+  <script type="module" src="../js/team-cv.js?v=3"></script>
 </head>
 
 <body>
@@ -96,7 +98,8 @@
     <section class="team-cards-grid" aria-label="CampusVolt Authors">
 
       <!-- Member 1: Clarice I. David -->
-      <article class="member-card">
+      <article class="member-card" data-cv-member="clarice" tabindex="0" aria-haspopup="dialog"
+        aria-label="View CV of Clarice I. David">
         <div class="member-card__portrait">
           <span class="member-card__badge-num">01</span>
           <img src="../images/team/David.PNG" alt="Clarice I. David" class="member-card__img" loading="lazy">
@@ -131,7 +134,9 @@
             <a href="https://www.linkedin.com/in/clarice-david/" target="_blank" rel="noopener noreferrer"
               class="social-icon-btn" aria-label="LinkedIn profile of Clarice I. David">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z"></path>
+                <path
+                  d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z">
+                </path>
               </svg>
             </a>
           </div>
@@ -139,7 +144,8 @@
       </article>
 
       <!-- Member 2: Michell Ann N. Ravago -->
-      <article class="member-card">
+      <article class="member-card" data-cv-member="michell" tabindex="0" aria-haspopup="dialog"
+        aria-label="View CV of Michell Ann N. Ravago">
         <div class="member-card__portrait">
           <span class="member-card__badge-num">02</span>
           <img src="../images/team/Ravago.png" alt="Michell Ann N. Ravago" class="member-card__img" loading="lazy">
@@ -164,8 +170,7 @@
             </div>
           </div>
           <div class="member-card__socials">
-            <a href="mailto:ravagomichell@gmail.com" class="social-icon-btn"
-              aria-label="Email Michell Ann N. Ravago">
+            <a href="mailto:ravagomichell@gmail.com" class="social-icon-btn" aria-label="Email Michell Ann N. Ravago">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -175,7 +180,9 @@
             <a href="https://www.linkedin.com/in/mchrvg/" target="_blank" rel="noopener noreferrer"
               class="social-icon-btn" aria-label="LinkedIn profile of Michell Ann N. Ravago">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z"></path>
+                <path
+                  d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z">
+                </path>
               </svg>
             </a>
           </div>
@@ -183,7 +190,8 @@
       </article>
 
       <!-- Member 3: Mharc Reinald M. Rigos -->
-      <article class="member-card">
+      <article class="member-card" data-cv-member="rei" tabindex="0" aria-haspopup="dialog"
+        aria-label="View CV of Mharc Reinald M. Rigos">
         <div class="member-card__portrait">
           <span class="member-card__badge-num">03</span>
           <img src="../images/team/Rigos.JPG" alt="Mharc Reinald M. Rigos" class="member-card__img" loading="lazy">
@@ -208,18 +216,19 @@
             </div>
           </div>
           <div class="member-card__socials">
-            <a href="mailto:mcrei1018@gmail.com" class="social-icon-btn"
-              aria-label="Email Mharc Reinald M. Rigos">
+            <a href="mailto:mcrei1018@gmail.com" class="social-icon-btn" aria-label="Email Mharc Reinald M. Rigos">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                 <polyline points="22,6 12,13 2,6"></polyline>
               </svg>
             </a>
-            <a href="https://www.linkedin.com/in/reirigos1018/" target="_blank" rel="noopener noreferrer" class="social-icon-btn"
-              aria-label="LinkedIn profile of Mharc Reinald M. Rigos">
+            <a href="https://www.linkedin.com/in/reirigos1018/" target="_blank" rel="noopener noreferrer"
+              class="social-icon-btn" aria-label="LinkedIn profile of Mharc Reinald M. Rigos">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z"></path>
+                <path
+                  d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z">
+                </path>
               </svg>
             </a>
           </div>
@@ -227,16 +236,17 @@
       </article>
 
       <!-- Member 4: Menard Arnel U. Sabugo -->
-      <article class="member-card">
+      <article class="member-card" data-cv-member="menard" tabindex="0" aria-haspopup="dialog"
+        aria-label="View CV of Menard Arnel U. Sabugo">
         <div class="member-card__portrait">
           <span class="member-card__badge-num">04</span>
           <img src="../images/team/Sabugo.png" alt="Menard Arnel U. Sabugo" class="member-card__img" loading="lazy">
         </div>
         <div class="member-card__body">
           <h2 class="member-card__name">Menard Arnel U. Sabugo</h2>
-          <span class="member-card__role-pill">Hardware Engineer</span>
+          <span class="member-card__role-pill">Hardware and Backend Engineer</span>
           <p class="member-card__subsystem">Subsystem · Dashboard & Cloud</p>
-          <p class="member-card__desc">Makes every number easy to read.</p>
+          <p class="member-card__desc">Live life and love richelle</p>
           <div class="member-card__tags">
             <span class="member-tag">Solar</span>
             <span class="member-tag">Charge Control</span>
@@ -252,8 +262,7 @@
             </div>
           </div>
           <div class="member-card__socials">
-            <a href="mailto:menardsabugo@gmail.com" class="social-icon-btn"
-              aria-label="Email Menard Arnel U. Sabugo">
+            <a href="mailto:menardsabugo@gmail.com" class="social-icon-btn" aria-label="Email Menard Arnel U. Sabugo">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round" aria-hidden="true">
                 <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
@@ -263,7 +272,9 @@
             <a href="https://www.linkedin.com/in/menardsabugo-q" target="_blank" rel="noopener noreferrer"
               class="social-icon-btn" aria-label="LinkedIn profile of Menard Arnel U. Sabugo">
               <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                <path d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z"></path>
+                <path
+                  d="M20.45 20.45h-3.56v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12ZM7.1 20.45H3.54V9H7.1v11.45Z">
+                </path>
               </svg>
             </a>
           </div>
@@ -322,11 +333,61 @@
 
   </main>
 
-  <script>
-    document.getElementById("btn-say-hello")?.addEventListener("click", () => {
-      window.location.href = "mailto:campusvolt@pup.edu.ph?subject=CampusVolt%20Inquiry%20from%20Kiosk";
-    });
-  </script>
+  <dialog class="cv-modal" id="cv-modal" aria-labelledby="cv-modal-name">
+    <div class="cv-modal__surface">
+      <button class="cv-modal__close" id="cv-modal-close" type="button" aria-label="Close CV">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M6 6l12 12M18 6 6 18"></path>
+        </svg>
+      </button>
+      <div id="cv-modal-content"></div>
+    </div>
+  </dialog>
+
+  <dialog class="contact-modal" id="contact-modal" aria-labelledby="contact-modal-title">
+    <div class="contact-modal__surface">
+      <div class="contact-modal__header">
+        <div>
+          <p class="contact-modal__eyebrow">Get in touch</p>
+          <h2 id="contact-modal-title">Send CampusVolt a message</h2>
+          <p>Tell us what you have in mind and we’ll prepare an email to our team.</p>
+        </div>
+        <button class="contact-modal__close" id="contact-modal-close" type="button" aria-label="Close contact form">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18"></path>
+          </svg>
+        </button>
+      </div>
+
+      <form class="contact-form" id="contact-form">
+        <div class="contact-form__row">
+          <label class="contact-field">
+            <span>Your name</span>
+            <input type="text" name="name" autocomplete="name" required placeholder="Juan Dela Cruz">
+          </label>
+          <label class="contact-field">
+            <span>Your email</span>
+            <input type="email" name="email" autocomplete="email" required placeholder="juan@example.com">
+          </label>
+        </div>
+
+        <label class="contact-field">
+          <span>Subject</span>
+          <input type="text" name="subject" required placeholder="CampusVolt inquiry">
+        </label>
+
+        <label class="contact-field">
+          <span>Message</span>
+          <textarea name="message" rows="6" required placeholder="Write your message here..."></textarea>
+        </label>
+
+        <div class="contact-form__footer">
+          <p>This opens your email app and sends to <strong>campusvolts@gmail.com</strong>.</p>
+          <button class="contact-form__submit" type="submit">Continue to email</button>
+        </div>
+      </form>
+    </div>
+  </dialog>
 
 </body>
 

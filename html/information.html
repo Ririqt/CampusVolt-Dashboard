@@ -8,10 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/information.css?v=3">
-  <script type="module" src="../js/campusvolt-telemetry.js"></script>
+  <link rel="stylesheet" href="../css/information.css?v=5">
+  <script type="module" src="../js/campusvolt-telemetry.js?v=2"></script>
   <script type="module" src="../js/modules/kiosk-preferences.js"></script>
-  <script type="module" src="../js/information-interactions.js?v=3"></script>
+  <script type="module" src="../js/information-interactions.js?v=5"></script>
 </head>
 
 <body>
@@ -147,21 +147,21 @@
         <h2 class="card__title">Weather forecast</h2>
 
         <div class="weather__now">
-          <p class="weather__temp"><span id="weather-temp-value">35</span>°C</p>
+          <p class="weather__temp"><span id="weather-temp-value">--</span>°C</p>
           <div class="weather__meta">
-            <p id="weather-condition">Sunny</p>
-            <p id="weather-location">Manila, PUP CEA</p>
+            <p id="weather-condition">Loading forecast…</p>
+            <p id="weather-location">PUP CEA, Manila</p>
           </div>
         </div>
 
         <dl class="weather__rows">
           <div class="weather__row">
             <dt>Expected solar</dt>
-            <dd id="weather-expected-solar">High</dd>
+            <dd id="weather-expected-solar">--</dd>
           </div>
           <div class="weather__row">
             <dt>Source</dt>
-            <dd id="weather-source">OpenWeatherAPI</dd>
+            <dd id="weather-source">Open-Meteo</dd>
           </div>
         </dl>
 
@@ -169,14 +169,25 @@
           <div class="metric-details__heading">
             <p class="metric-details__eyebrow">Environmental telemetry</p>
             <h3>Conditions affecting solar harvest</h3>
+            <div class="weather-live-summary" aria-live="polite">
+              <p class="weather-live-summary__temp"><span id="weather-detail-temp">--</span>°C</p>
+              <div>
+                <p class="weather-live-summary__condition" id="weather-detail-condition">Loading forecast…</p>
+                <p class="weather-live-summary__caption">Current modeled conditions</p>
+              </div>
+            </div>
           </div>
           <dl class="metric-details__grid">
-            <div><dt>Current condition</dt><dd id="weather-detail-condition">Sunny</dd></div>
-            <div><dt>Station location</dt><dd id="weather-detail-location">Manila, PUP CEA</dd></div>
-            <div><dt>Solar outlook</dt><dd id="weather-detail-solar">High</dd></div>
-            <div><dt>Forecast provider</dt><dd id="weather-detail-source">OpenWeatherAPI</dd></div>
-            <div><dt>Sensor status</dt><dd id="weather-sensor-status">Awaiting hardware</dd></div>
-            <div><dt>Telemetry source</dt><dd id="weather-telemetry-source">ESP32 · pending</dd></div>
+            <div><dt>Solar outlook</dt><dd id="weather-detail-solar">--</dd></div>
+            <div><dt>Cloud cover</dt><dd id="weather-cloud-cover">--</dd></div>
+            <div><dt>Rain probability</dt><dd id="weather-rain-probability">--</dd></div>
+            <div><dt>Solar radiation</dt><dd id="weather-solar-radiation">--</dd></div>
+            <div><dt>Forecast window</dt><dd>Next 3 hours</dd></div>
+            <div><dt>Station location</dt><dd id="weather-detail-location">PUP CEA, Manila</dd></div>
+            <div><dt>Kiosk coordinates</dt><dd>14.599060, 121.005898</dd></div>
+            <div><dt>Forecast provider</dt><dd id="weather-detail-source">Open-Meteo</dd></div>
+            <div><dt>API status</dt><dd id="weather-sensor-status">Connecting…</dd></div>
+            <div><dt>Last updated</dt><dd id="weather-telemetry-source">Pending</dd></div>
           </dl>
         </div>
       </article>

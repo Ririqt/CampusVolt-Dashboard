@@ -5,6 +5,7 @@ const modalContent = document.getElementById("metric-modal-content");
 const modalClose = document.getElementById("metric-modal-close");
 
 const mirroredTelemetry = [
+  ["weather-temp-value", "weather-detail-temp"],
   ["weather-condition", "weather-detail-condition"],
   ["weather-location", "weather-detail-location"],
   ["weather-expected-solar", "weather-detail-solar"],
@@ -58,6 +59,7 @@ function restoreDetails() {
   activeDetails.setAttribute("aria-hidden", "true");
   activeCard.append(activeDetails);
   activeCard.setAttribute("aria-expanded", "false");
+  modal?.classList.remove("metric-modal--solar");
   activeCard = null;
   activeDetails = null;
 }
@@ -72,6 +74,7 @@ function openDetails(card) {
 
   activeCard = card;
   activeDetails = details;
+  modal.classList.toggle("metric-modal--solar", card.classList.contains("card--solar"));
   modalTitle.textContent = cardTitle.textContent;
   details.hidden = false;
   details.setAttribute("aria-hidden", "false");
