@@ -1,5 +1,5 @@
-import { DEFAULT_TELEMETRY, telemetryStore } from "./telemetry-store.js";
-import { deriveEnergyPolicy } from "./energy-policy.js";
+import { DEFAULT_TELEMETRY, telemetryStore } from "./telemetry-store.js?v=3";
+import { deriveEnergyPolicy } from "./energy-policy.js?v=3";
 
 export const SIMULATION_SCENARIOS = Object.freeze({
   sunny: {
@@ -30,7 +30,7 @@ export const SIMULATION_SCENARIOS = Object.freeze({
   },
   evening: {
     label: "Evening discharge",
-    description: "The battery carries the station after solar generation falls away.",
+    description: "The battery carries the station in Conservation Mode after solar generation falls away.",
     solarPowerW: 0,
     loadPowerW: 110,
     soc: 48,
@@ -39,7 +39,7 @@ export const SIMULATION_SCENARIOS = Object.freeze({
     protection: "normal",
     weatherForecast: "none",
     expectedSolarW: 0,
-    expectedMode: "survival-eco-mode",
+    expectedMode: "conservation-mode",
   },
   lowBattery: {
     label: "Low battery",

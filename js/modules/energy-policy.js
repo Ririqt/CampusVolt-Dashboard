@@ -1,19 +1,19 @@
 export function deriveEnergyPolicy(snapshot) {
-  const { battery, load, system, weather } = snapshot;
+  const { battery, system, weather } = snapshot;
   const poorForecast = weather.forecast === "low" || weather.forecast === "none";
   let policy;
 
-  if (battery.soc < 25 || weather.forecast === "none" || (poorForecast && battery.soc < 40)) {
+  if (battery.soc < 25 || (poorForecast && battery.soc < 30)) {
     policy = {
       mode: "survival-eco-mode",
       maxLoadW: 60,
-      reason: "Low reserve or weak forecast requires minimum-energy charging service.",
+      reason: "Low reserve or weak forecast pauses AC outlets while reduced-power DC charging remains available.",
     };
-  } else if ((battery.soc < 50 && poorForecast) || load.totalPowerW > 250) {
+  } else if (battery.soc < 50 && poorForecast) {
     policy = {
       mode: "conservation-mode",
       maxLoadW: 150,
-      reason: "Low battery reserve combined with a weak forecast, or demand above 250 W, requires restricted power allocation.",
+      reason: "Battery SoC below 50% combined with a Low or None forecast requires restricted power allocation.",
     };
   } else {
     policy = {

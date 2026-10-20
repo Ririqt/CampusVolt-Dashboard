@@ -1,6 +1,6 @@
 // CampusVolt Station Telemetry Controller (Information Page)
 import { portsState } from "./modules/ports-state.js";
-import { telemetryStore } from "./modules/telemetry-store.js";
+import { telemetryStore } from "./modules/telemetry-store.js?v=3";
 import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
 
 const text = (id, value) => {
@@ -46,29 +46,20 @@ function renderStationTelemetry(snapshot) {
   text("battery-percent-value", Math.round(battery.soc));
   if (ring) ring.style.setProperty("--progress", Math.max(0, Math.min(100, battery.soc)));
   text("battery-status-value", titleCase(battery.status));
+  text("battery-detail-soc-value", Math.round(battery.soc));
+  text("battery-detail-status-value", titleCase(battery.status));
   text("battery-est-full-value", battery.status === "charging" ? formatMinutes(battery.estimatedMinutesToFull) : "—");
   text("battery-runtime-value", battery.status === "discharging" ? formatMinutes(battery.estimatedRuntimeMinutes) : "—");
-  text("battery-chemistry-value", battery.chemistry);
-  text("battery-voltage-value", battery.ratedVoltage.toFixed(1));
-  text("battery-capacity-ah-value", battery.ratedCapacityAh.toFixed(0));
   text("battery-capacity-kwh-value", (battery.ratedEnergyWh / 1000).toFixed(2));
   text("battery-pack-voltage-value", battery.voltage.toFixed(2));
   text("battery-current-value", `${battery.currentA >= 0 ? "+" : ""}${battery.currentA.toFixed(2)}`);
   text("battery-power-value", `${battery.powerW >= 0 ? "+" : ""}${Math.round(battery.powerW)}`);
-  text("battery-remaining-ah-value", battery.remainingAh.toFixed(1));
   text("battery-remaining-kwh-value", (battery.remainingEnergyWh / 1000).toFixed(2));
   text("battery-temperature-value", battery.temperatureC.toFixed(1));
   text("battery-health-value", battery.healthPercent.toFixed(0));
-  text("battery-cycle-count-value", battery.cycleCount);
-  text("battery-cell-range-value", `${battery.cellMinVoltage.toFixed(2)}–${battery.cellMaxVoltage.toFixed(2)} V`);
   text("battery-cell-delta-value", battery.cellDeltaMv.toFixed(0));
   text("battery-protection-value", titleCase(battery.protection));
-  text("battery-telemetry-source", snapshot.source === "simulation" ? "Simulation model" : titleCase(snapshot.source));
   text("battery-updated-value", formatTelemetryAge(system.updatedAt));
-  text("battery-message-id-value", system.messageId);
-  text("battery-latency-value", system.latencyMs);
-  text("battery-forecast-value", `${titleCase(weather.forecast)} (${weather.expectedSolarW} W expected)`);
-  text("battery-safety-value", titleCase(energyManagement.safetyState));
 
   text("solar-power-value", Math.round(solar.powerW));
   text("solar-today-value", (solar.energyTodayWh / 1000).toFixed(2));
@@ -112,7 +103,14 @@ const updatePortsTelemetry = () => {
   text("output-dc-voltage-value", output.dc.voltageV.toFixed(2));
   text("output-dc-current-value", output.dc.currentA.toFixed(2));
   text("output-dc-power-value", output.dc.powerW.toFixed(1));
-  text("output-telemetry-source", "Live session simulation");
+  const demoModeEnabled = kioskPreferences.isDemoModeEnabled();
+  text("output-telemetry-source", demoModeEnabled ? "Live session simulation" : "Charging output monitor");
+  text(
+    "output-telemetry-note",
+    demoModeEnabled
+      ? "Values respond to the ports currently in use and each session's power draw. Gentle load variation is simulated; the hardware build will replace it with PZEM-004T and DC sensor readings."
+      : "Output readings remain available in the standard interface. PZEM-004T and DC sensor readings will replace the current session-based values when the ESP32 hardware is connected."
+  );
   renderEnergy(dailyStats.energyDeliveredKWh, "energy-delivered-value", "energy-delivered-unit");
   renderEnergy(dailyStats.energyDeliveredKWh, "output-energy-value", "output-energy-unit");
 };
@@ -126,7 +124,10 @@ portsState.addEventListener("daily-stats-changed", updatePortsTelemetry);
 
 renderStationTelemetry(telemetryStore.getSnapshot());
 telemetryStore.addEventListener("telemetry-changed", (event) => renderStationTelemetry(event.detail.snapshot));
-kioskPreferences.addEventListener("demo-mode-changed", () => renderStationTelemetry(telemetryStore.getSnapshot()));
+kioskPreferences.addEventListener("demo-mode-changed", () => {
+  renderStationTelemetry(telemetryStore.getSnapshot());
+  updatePortsTelemetry();
+});
 window.setInterval(() => {
   const current = telemetryStore.getSnapshot();
   text("battery-updated-value", formatTelemetryAge(current.system.updatedAt));

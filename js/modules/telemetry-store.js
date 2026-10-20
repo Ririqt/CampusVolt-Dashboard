@@ -1,4 +1,4 @@
-import { deriveEnergyPolicy } from "./energy-policy.js";
+import { deriveEnergyPolicy } from "./energy-policy.js?v=3";
 
 const STORAGE_KEY = "cv_station_telemetry_v1";
 const HISTORY_KEY = "cv_station_telemetry_history_v1";

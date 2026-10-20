@@ -99,17 +99,13 @@ The Information page explains the station and displays detailed telemetry.
 
 Select the card to open a detailed dialog containing:
 
-- SoC and operating state
-- Rated voltage, capacity, and energy
+- SoC and operating status
+- Rated and remaining energy
 - Pack voltage, current, and power
-- Remaining amp-hours and energy
 - Temperature and State of Health
-- Cycle count
-- Cell-voltage range and cell delta
+- Cell balance
 - Protection state
-- Telemetry source and freshness
-- Message ID and display latency
-- Weather input and safety override
+- Last-update freshness
 
 These values currently come from the shared telemetry simulator. They are structured so a Gentai BMS/ESP32 adapter can replace the simulation later.
 
@@ -135,6 +131,7 @@ This section uses active charging sessions as its input:
 - When a group has no active session, its voltage, current, and load display zero.
 
 The physical version will replace these calculations with PZEM-004T and DC sensor readings.
+The panel remains visible when Demonstration Mode is off so the same area can display ESP32 sensor readings in the standard interface.
 
 #### Daily summary counters
 
@@ -167,13 +164,14 @@ Demonstration Mode is enabled by default.
 When it is **On**:
 
 - Simulated station telemetry and the policy status strip are visible.
-- The Charging Output Telemetry panel is visible.
+- The Charging Output Telemetry panel labels its values as live session simulation.
 - Rule-based mode limits can restrict new charging sessions.
 - The Simulator link and controls are available.
 
 When it is **Off**:
 
-- Demo-only telemetry banners and output panels are hidden.
+- Demo-only station telemetry banners are hidden.
+- The Charging Output Telemetry panel remains visible as part of the standard interface.
 - Charging ports remain usable without simulated policy restrictions.
 - The Simulator shortcut is hidden and direct Simulator controls are disabled.
 - The navigation connection label changes to `Local interface`.
@@ -259,17 +257,17 @@ Rules are evaluated in this order:
 Activated when any of these is true:
 
 - SoC is below 25%
-- Forecast is `None`
-- Forecast is weak (`Low` or `None`) while SoC is below 40%
+- Forecast is weak (`Low` or `None`) while SoC is below 30%
 
 Maximum permitted station load: **60 W**.
 
+In this mode, both AC outlets are unavailable. Type-C, Micro USB, Lightning, and wireless charging remain available with reduced DC power allowances, provided no safety override is active.
+
 ### 2. Conservation Mode
 
-Activated when either condition is true:
+Activated when:
 
 - SoC is below 50% **and** the forecast is `Low` or `None`
-- Requested station load is above 250 W
 
 Maximum permitted station load: **150 W**.
 
@@ -313,6 +311,8 @@ Requested allowances are:
 | Wireless       | 15 W      |
 
 This is intentionally conservative: the admission check reserves the port's possible demand, while the live session telemetry displays the current simulated draw.
+
+Survival Eco is an exception to the normal rated-power reservation: AC outlets are paused and reduced allowances of 20 W Type-C, 8 W Micro USB, 12 W Lightning, and 8 W wireless keep all DC charging types eligible within the 60 W station limit.
 
 ## Telemetry and synchronization
 

@@ -1,7 +1,7 @@
 // CampusVolt Dashboard Main Controller
-import { initChargingPorts } from "./modules/charging-controller.js";
+import { initChargingPorts } from "./modules/charging-controller.js?v=3";
 import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
-import { telemetryStore } from "./modules/telemetry-store.js";
+import { telemetryStore } from "./modules/telemetry-store.js?v=3";
 
 // -------------------------------------------------------------
 // 1. Initialize Modular Charging Ports Component (Figma Design)

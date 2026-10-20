@@ -6,7 +6,7 @@
 import { portsState } from "./ports-state.js";
 import { PortsRenderer } from "./ports-renderer.js";
 import { ChargingModal } from "./charging-modal.js";
-import { telemetryStore } from "./telemetry-store.js";
+import { telemetryStore } from "./telemetry-store.js?v=3";
 import { kioskPreferences } from "./kiosk-preferences.js?v=2";
 
 export class ChargingPortsController {
@@ -119,6 +119,7 @@ export class ChargingPortsController {
     if (!kioskPreferences.isDemoModeEnabled()) return true;
     const policy = snapshot.energyManagement;
     if (policy.maxLoadW <= 0) return false;
+    if (policy.mode === "survival-eco-mode" && port.type === "outlet") return false;
     const ratedPowerByType = {
       outlet: 150,
       "type-c": 65,
@@ -126,9 +127,17 @@ export class ChargingPortsController {
       lightning: 20,
       wireless: 15,
     };
+    const survivalDcAllowanceByType = {
+      "type-c": 20,
+      "micro-usb": 8,
+      lightning: 12,
+      wireless: 8,
+    };
     const activeLoadW = Array.from(this.state.activeSessions.values())
       .reduce((total, session) => total + (Number(session.watts) || 0), 0);
-    const requestedPowerW = ratedPowerByType[port.type] || 20;
+    const requestedPowerW = policy.mode === "survival-eco-mode"
+      ? (survivalDcAllowanceByType[port.type] || 20)
+      : (ratedPowerByType[port.type] || 20);
     return activeLoadW + requestedPowerW <= policy.maxLoadW;
   }
 
