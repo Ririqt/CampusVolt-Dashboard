@@ -80,7 +80,7 @@ const members = {
   rei: {
     name: "Mharc Reinald M. Rigos",
     role: "Project Lead · Software Engineer",
-    image: "../images/team/Rigos.JPG",
+    image: "../images/team/Rigos-1x1.jpg?v=20261021",
     email: "mcrei1018@gmail.com",
     linkedin: "https://www.linkedin.com/in/reirigos1018/",
     summary: "Computer Engineering student experienced in applied, developmental, and quantitative experimental research. Leads technical studies spanning renewable energy, embedded IoT, machine learning, predictive modeling, ISO/IEC 25010 evaluation, and secure research-data management.",

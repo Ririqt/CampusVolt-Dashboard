@@ -6,6 +6,7 @@
 import { portsState } from "./ports-state.js";
 import { PortsRenderer } from "./ports-renderer.js";
 import { ChargingModal } from "./charging-modal.js";
+import { telemetryStore } from "./telemetry-store.js";
 
 export class ChargingPortsController {
   constructor(containerId = "charging-ports-container") {
@@ -14,6 +15,7 @@ export class ChargingPortsController {
     this.renderer = null;
     this.modal = null;
     this.state = portsState;
+    this.telemetry = telemetryStore;
   }
 
   init() {
@@ -35,6 +37,12 @@ export class ChargingPortsController {
 
     // Bind state events
     this._bindStateEvents();
+
+    // Apply simulated or hardware-provided energy policy.
+    this._applyEnergyPolicy(this.telemetry.getSnapshot());
+    this.telemetry.addEventListener("telemetry-changed", (event) => {
+      this._applyEnergyPolicy(event.detail.snapshot);
+    });
   }
 
   _bindDOMEvents() {
@@ -47,6 +55,11 @@ export class ChargingPortsController {
 
       const port = this.state.getPort(portId);
       if (!port) return;
+
+      if (port.status === "available" && !this._isPortAllowed(port, this.telemetry.getSnapshot())) {
+        this._showEnergyToast(this.telemetry.getSnapshot().energyManagement.reason);
+        return;
+      }
 
       // Always open modal for the port (available -> payment selection, in-use -> active charging overlay)
       this.modal.openForPort(portId);
@@ -70,6 +83,7 @@ export class ChargingPortsController {
       const { port } = e.detail;
       this.renderer.updatePortCard(port, this.state);
       this.renderer.updateDashboardCounters(this.state);
+      this._applyEnergyPolicy(this.telemetry.getSnapshot());
     });
 
     // Session tick (per-second timer countdown)
@@ -86,13 +100,58 @@ export class ChargingPortsController {
       const { port } = e.detail;
       this.renderer.updatePortCard(port, this.state);
       this.renderer.updateDashboardCounters(this.state);
+      this._applyEnergyPolicy(this.telemetry.getSnapshot());
     });
 
     // Cross-tab or page sync event
     this.state.addEventListener("ports-synced", () => {
       this.renderer.render(this.state);
       this.renderer.updateDashboardCounters(this.state);
+      this._applyEnergyPolicy(this.telemetry.getSnapshot());
     });
+  }
+
+  _isPortAllowed(port, snapshot) {
+    const policy = snapshot.energyManagement;
+    if (policy.maxLoadW <= 0) return false;
+    const ratedPowerByType = {
+      outlet: 150,
+      "type-c": 65,
+      "micro-usb": 12,
+      lightning: 20,
+      wireless: 15,
+    };
+    const activeLoadW = Array.from(this.state.activeSessions.values())
+      .reduce((total, session) => total + (Number(session.watts) || 0), 0);
+    const requestedPowerW = ratedPowerByType[port.type] || 20;
+    return activeLoadW + requestedPowerW <= policy.maxLoadW;
+  }
+
+  _applyEnergyPolicy(snapshot) {
+    if (!this.container) return;
+    for (const card of this.container.querySelectorAll(".port-card")) {
+      const port = this.state.getPort(card.dataset.portId);
+      if (!port) continue;
+      const disabled = port.status === "available" && !this._isPortAllowed(port, snapshot);
+      card.classList.toggle("port-card--energy-disabled", disabled);
+      card.setAttribute("aria-disabled", disabled ? "true" : "false");
+      if (disabled) card.title = snapshot.energyManagement.reason;
+      else card.removeAttribute("title");
+    }
+  }
+
+  _showEnergyToast(message) {
+    let toast = document.getElementById("port-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.id = "port-toast";
+      toast.className = "port-toast";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add("port-toast--visible");
+    clearTimeout(this._toastTimeout);
+    this._toastTimeout = setTimeout(() => toast.classList.remove("port-toast--visible"), 3200);
   }
 
   _showOccupiedToast(port) {

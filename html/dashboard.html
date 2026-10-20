@@ -8,9 +8,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/dashboard.css">
-  <link rel="stylesheet" href="../css/charging-ports.css">
-  <script type="module" src="../js/campusvolt-dashboard.js"></script>
+  <link rel="stylesheet" href="../css/dashboard.css?v=2">
+  <link rel="stylesheet" href="../css/charging-ports.css?v=2">
+  <script type="module" src="../js/campusvolt-dashboard.js?v=6"></script>
 </head>
 
 <body>
@@ -50,7 +50,23 @@
 
   <main class="container">
 
-
+    <section class="station-strip" id="station-telemetry-strip" aria-label="Station energy status" aria-live="polite">
+      <div class="station-strip__identity">
+        <span class="station-strip__source" id="dashboard-telemetry-source">Simulation</span>
+        <div>
+          <strong id="dashboard-policy-mode">Normal Mode</strong>
+          <p id="dashboard-policy-reason">No Conservation or Survival Eco trigger is active, so full service remains available.</p>
+        </div>
+      </div>
+      <dl class="station-strip__metrics">
+        <div><dt>Battery</dt><dd><span id="dashboard-battery-soc">85</span>%</dd></div>
+        <div><dt>Solar</dt><dd><span id="dashboard-solar-power">285</span> W</dd></div>
+        <div><dt>Load</dt><dd><span id="dashboard-load-power">90</span> W</dd></div>
+        <div><dt>Forecast</dt><dd id="dashboard-weather-forecast">High</dd></div>
+        <div><dt>Latency</dt><dd><span id="dashboard-telemetry-latency">0</span> ms</dd></div>
+      </dl>
+      <a class="station-strip__control" href="../html/simulator.html">Demo controls →</a>
+    </section>
 
     <!-- ================= CHARGING PORTS (FIGMA MAIN DASHBOARD) ================= -->
     <section class="charging-ports-section" id="charging-ports-container" aria-label="Charging ports station selection">

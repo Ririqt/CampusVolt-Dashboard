@@ -11,13 +11,25 @@ const STORAGE_KEY_SESSIONS = "cv_charging_sessions";
 const STORAGE_KEY_PORTS = "cv_ports_status";
 const STORAGE_KEY_STATS = "cv_charging_stats";
 
+function getLocalDateKey(timestamp = Date.now()) {
+  const date = new Date(timestamp);
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+}
+
+function getLocalDayBounds(dateKey) {
+  const [year, month, day] = dateKey.split("-").map(Number);
+  const start = new Date(year, month - 1, day).getTime();
+  return { start, end: new Date(year, month - 1, day + 1).getTime() };
+}
+
 class PortsStateManager extends EventTarget {
   constructor() {
     super();
     this.ports = new Map();
     this.activeSessions = new Map();
-    this.devicesChargedCount = 37; // Baseline from dashboard
-    this.totalEnergyDeliveredKWh = 3.2;
+    this.statsDateKey = getLocalDateKey();
+    this.devicesChargedCount = 0;
+    this.totalEnergyDeliveredKWh = 0;
     this.channel = null;
 
     this._initializePorts();
@@ -39,7 +51,8 @@ class PortsStateManager extends EventTarget {
 
     // 2. Load saved stats if any
     const savedStats = this._loadSavedStats();
-    if (savedStats) {
+    const hasCurrentDayStats = savedStats?.dateKey === this.statsDateKey;
+    if (hasCurrentDayStats) {
       if (typeof savedStats.devicesChargedCount === "number") {
         this.devicesChargedCount = savedStats.devicesChargedCount;
       }
@@ -68,14 +81,17 @@ class PortsStateManager extends EventTarget {
             timerId: null,
           };
           this.activeSessions.set(session.portId, session);
+          if (!hasCurrentDayStats && getLocalDateKey(session.startTime) === this.statsDateKey) {
+            this.devicesChargedCount++;
+          }
           this._startSessionTimer(session);
         } else {
           // Finished while away on other section or tab
           port.status = "available";
-          this.devicesChargedCount++;
-          if (sessionData.energyKWh) {
-            this.totalEnergyDeliveredKWh += sessionData.energyKWh;
+          if (!hasCurrentDayStats && getLocalDateKey(sessionData.startTime) === this.statsDateKey) {
+            this.devicesChargedCount++;
           }
+          this.totalEnergyDeliveredKWh += this._calculateSessionEnergyForDay(sessionData, this.statsDateKey, now);
         }
       }
 
@@ -85,11 +101,13 @@ class PortsStateManager extends EventTarget {
         for (const [portId, status] of Object.entries(savedPorts)) {
           const port = this.ports.get(portId);
           if (port && !this.activeSessions.has(portId)) {
-            port.status = status;
+            // "in-use" is valid only while a matching live session exists.
+            port.status = status === "in-use" ? "available" : status;
           }
         }
       }
 
+      this._repairOrphanedPortStates();
       this._saveToStorage(false);
     } else if (savedSessions === null) {
       // First run in this browser: Initialize default active sessions if defined in PORT_CATEGORIES
@@ -142,7 +160,7 @@ class PortsStateManager extends EventTarget {
 
     // 3. Cross-tab real-time synchronization via storage event
     window.addEventListener("storage", (e) => {
-      if (e.key === STORAGE_KEY_SESSIONS || e.key === STORAGE_KEY_PORTS) {
+      if (e.key === STORAGE_KEY_SESSIONS || e.key === STORAGE_KEY_PORTS || e.key === STORAGE_KEY_STATS) {
         this._syncFromExternalStorage();
       }
     });
@@ -167,9 +185,11 @@ class PortsStateManager extends EventTarget {
 
     session.timerId = setInterval(() => {
       const now = Date.now();
+      this._ensureCurrentDay();
       const remaining = Math.max(0, Math.round((session.endTime - now) / 1000));
       session.remainingSeconds = remaining;
-      session.energyKWh += (session.watts / 3600000);
+      const elapsedSeconds = Math.max(0, Math.min(session.totalSeconds, (now - session.startTime) / 1000));
+      session.energyKWh = session.watts * elapsedSeconds / 3600000;
 
       // Fast storage save for remaining seconds without spamming broadcast
       this._saveSessionsOnly();
@@ -201,6 +221,8 @@ class PortsStateManager extends EventTarget {
       }
     }
 
+    if (this._repairOrphanedPortStates(true)) changed = true;
+
     if (changed) {
       this._saveToStorage();
     }
@@ -210,6 +232,12 @@ class PortsStateManager extends EventTarget {
    * Sync active state if another tab or window made changes
    */
   _syncFromExternalStorage() {
+    const savedStats = this._loadSavedStats();
+    if (savedStats?.dateKey === getLocalDateKey()) {
+      this.statsDateKey = savedStats.dateKey;
+      this.devicesChargedCount = Number(savedStats.devicesChargedCount) || 0;
+      this.totalEnergyDeliveredKWh = Number(savedStats.totalEnergyDeliveredKWh) || 0;
+    }
     const savedSessions = this._loadSavedSessions() || [];
     const now = Date.now();
     const newSessionPortIds = new Set(savedSessions.map(s => s.portId));
@@ -254,6 +282,8 @@ class PortsStateManager extends EventTarget {
       }
     }
 
+    this._repairOrphanedPortStates(true);
+    this._reconcileActiveConnectionCount();
     this._dispatch("ports-synced", {});
   }
 
@@ -292,6 +322,8 @@ class PortsStateManager extends EventTarget {
 
       // 3. Stats
       localStorage.setItem(STORAGE_KEY_STATS, JSON.stringify({
+        schemaVersion: 2,
+        dateKey: this.statsDateKey,
         devicesChargedCount: this.devicesChargedCount,
         totalEnergyDeliveredKWh: this.totalEnergyDeliveredKWh,
       }));
@@ -358,6 +390,108 @@ class PortsStateManager extends EventTarget {
     }
   }
 
+  _repairOrphanedPortStates(dispatchChanges = false) {
+    let changed = false;
+    for (const port of this.ports.values()) {
+      if (port.status !== "in-use" || this.activeSessions.has(port.id)) continue;
+      port.status = "available";
+      changed = true;
+      if (dispatchChanges) {
+        this._dispatch("port-status-changed", { port, session: null });
+      }
+    }
+    return changed;
+  }
+
+  _calculateSessionEnergyForDay(session, dateKey = this.statsDateKey, now = Date.now()) {
+    const { start, end } = getLocalDayBounds(dateKey);
+    const activeStart = Math.max(Number(session.startTime) || 0, start);
+    const activeEnd = Math.min(Number(session.endTime) || now, now, end);
+    const seconds = Math.max(0, (activeEnd - activeStart) / 1000);
+    return (Number(session.watts) || 0) * seconds / 3600000;
+  }
+
+  _reconcileActiveConnectionCount() {
+    const activeToday = Array.from(this.activeSessions.values()).filter((session) => {
+      return getLocalDateKey(session.startTime) === this.statsDateKey
+        || (Number(session.startTime) < getLocalDayBounds(this.statsDateKey).start && Number(session.endTime) > getLocalDayBounds(this.statsDateKey).start);
+    }).length;
+
+    if (this.devicesChargedCount >= activeToday) return false;
+    this.devicesChargedCount = activeToday;
+    return true;
+  }
+
+  _ensureCurrentDay() {
+    const currentDateKey = getLocalDateKey();
+    if (this.statsDateKey === currentDateKey) return false;
+
+    this.statsDateKey = currentDateKey;
+    this.devicesChargedCount = this.activeSessions.size;
+    this.totalEnergyDeliveredKWh = 0;
+    this._saveToStorage();
+    this._dispatch("daily-stats-changed", this.getDailyStats());
+    return true;
+  }
+
+  getDailyStats() {
+    this._ensureCurrentDay();
+    const repairedPorts = this._repairOrphanedPortStates();
+    const reconciledCount = this._reconcileActiveConnectionCount();
+    if (repairedPorts || reconciledCount) {
+      this._saveToStorage(false);
+    }
+    let activeEnergyKWh = 0;
+    for (const session of this.activeSessions.values()) {
+      activeEnergyKWh += this._calculateSessionEnergyForDay(session);
+    }
+    return {
+      dateKey: this.statsDateKey,
+      devicesConnected: this.devicesChargedCount,
+      energyDeliveredKWh: this.totalEnergyDeliveredKWh + activeEnergyKWh,
+    };
+  }
+
+  getLiveOutputTelemetry(timestamp = Date.now()) {
+    let acPowerW = 0;
+    let dcPowerW = 0;
+    let nominalDemandW = 0;
+
+    for (const session of this.activeSessions.values()) {
+      const nominalWatts = Math.max(0, Number(session.watts) || 0);
+      const phase = Array.from(session.portId || "").reduce((sum, character) => sum + character.charCodeAt(0), 0);
+      const liveWatts = nominalWatts * (0.97 + Math.sin(timestamp / 3500 + phase) * 0.03);
+      nominalDemandW += nominalWatts;
+
+      if (session.portType === "outlet") acPowerW += liveWatts;
+      else dcPowerW += liveWatts;
+    }
+
+    const totalPowerW = acPowerW + dcPowerW;
+    const acVoltageV = acPowerW > 0
+      ? 220 - Math.min(2.5, acPowerW * 0.008) + Math.sin(timestamp / 4200) * 0.35
+      : 0;
+    const dcVoltageV = dcPowerW > 0
+      ? 5 - Math.min(0.15, dcPowerW * 0.0015) + Math.sin(timestamp / 3100) * 0.025
+      : 0;
+    return {
+      source: "active-session-simulation",
+      activeChannels: this.activeSessions.size,
+      demandPowerW: nominalDemandW,
+      totalPowerW,
+      ac: {
+        voltageV: acVoltageV,
+        currentA: acVoltageV > 0 ? acPowerW / acVoltageV : 0,
+        powerW: acPowerW,
+      },
+      dc: {
+        voltageV: dcVoltageV,
+        currentA: dcVoltageV > 0 ? dcPowerW / dcVoltageV : 0,
+        powerW: dcPowerW,
+      },
+    };
+  }
+
   /**
    * Get all registered ports as an array
    */
@@ -417,6 +551,7 @@ class PortsStateManager extends EventTarget {
    * Start a charging session on a port
    */
   startSession(portId, durationMinutes, method = "Cash", device = "Phone") {
+    this._ensureCurrentDay();
     const port = this.getPort(portId);
     if (!port) {
       throw new Error(`Port "${portId}" not found.`);
@@ -445,6 +580,7 @@ class PortsStateManager extends EventTarget {
     };
 
     this.activeSessions.set(portId, session);
+    this.devicesChargedCount++;
     this._saveToStorage();
     this._dispatch("port-status-changed", { port, session });
     this._startSessionTimer(session);
@@ -465,9 +601,9 @@ class PortsStateManager extends EventTarget {
     const port = this.getPort(portId);
     if (port) {
       port.status = "available";
-      this.devicesChargedCount++;
       if (session) {
-        this.totalEnergyDeliveredKWh += session.energyKWh;
+        this._ensureCurrentDay();
+        this.totalEnergyDeliveredKWh += this._calculateSessionEnergyForDay(session);
       }
       this._saveToStorage();
       this._dispatch("port-status-changed", { port, session: null });

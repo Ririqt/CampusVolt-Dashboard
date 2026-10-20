@@ -11,8 +11,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="../css/information.css?v=5">
-  <script type="module" src="../js/campusvolt-telemetry.js?v=3"></script>
+  <link rel="stylesheet" href="../css/information.css?v=7">
+  <script type="module" src="../js/campusvolt-telemetry.js?v=7"></script>
   <script type="module" src="../js/modules/kiosk-preferences.js"></script>
   <script type="module" src="../js/information-interactions.js?v=6"></script>
 </head>
@@ -61,6 +61,15 @@
       <h1 class="page-header__title">Station status & how it works</h1>
       <p class="page-header__subtitle">Live energy data from this kiosk, plus a quick guide to using it.</p>
     </section>
+
+    <aside class="telemetry-notice" id="telemetry-notice" aria-live="polite">
+      <div>
+        <span class="telemetry-notice__badge" id="telemetry-source-badge">Simulation</span>
+        <strong id="telemetry-policy-mode">Normal Mode</strong>
+        <span id="telemetry-policy-reason">No Conservation or Survival Eco trigger is active, so full service remains available.</span>
+      </div>
+      <a href="../html/simulator.html">Control demo telemetry →</a>
+    </aside>
 
     <!-- ================= TOP METRIC CARDS ================= -->
     <section class="metrics" aria-label="Station overview">
@@ -114,12 +123,72 @@
               <dd><span id="battery-capacity-kwh-value">1.28</span> kWh</dd>
             </div>
             <div>
+              <dt>Pack voltage</dt>
+              <dd><span id="battery-pack-voltage-value">13.36</span> V</dd>
+            </div>
+            <div>
+              <dt>Battery current</dt>
+              <dd><span id="battery-current-value">14.60</span> A</dd>
+            </div>
+            <div>
+              <dt>Net battery power</dt>
+              <dd><span id="battery-power-value">195</span> W</dd>
+            </div>
+            <div>
+              <dt>Remaining capacity</dt>
+              <dd><span id="battery-remaining-ah-value">85</span> Ah</dd>
+            </div>
+            <div>
+              <dt>Remaining energy</dt>
+              <dd><span id="battery-remaining-kwh-value">1.09</span> kWh</dd>
+            </div>
+            <div>
+              <dt>Temperature</dt>
+              <dd><span id="battery-temperature-value">30</span> °C</dd>
+            </div>
+            <div>
+              <dt>State of health</dt>
+              <dd><span id="battery-health-value">98</span>%</dd>
+            </div>
+            <div>
+              <dt>Cycle count</dt>
+              <dd id="battery-cycle-count-value">42</dd>
+            </div>
+            <div>
+              <dt>Cell voltage range</dt>
+              <dd id="battery-cell-range-value">3.33–3.35 V</dd>
+            </div>
+            <div>
+              <dt>Cell delta</dt>
+              <dd><span id="battery-cell-delta-value">20</span> mV</dd>
+            </div>
+            <div>
               <dt>Protection state</dt>
               <dd id="battery-protection-value">Normal</dd>
             </div>
             <div>
               <dt>Telemetry source</dt>
-              <dd id="battery-telemetry-source">ESP32 · pending</dd>
+              <dd id="battery-telemetry-source">Simulation</dd>
+            </div>
+            <div>
+              <dt>Last updated</dt>
+              <dd id="battery-updated-value">Just now</dd>
+            </div>
+            <div>
+              <dt>Message ID</dt>
+              <dd id="battery-message-id-value">SIM-000000</dd>
+            </div>
+            <div>
+              <dt>Display latency</dt>
+              <dd><span id="battery-latency-value">0</span> ms</dd>
+            </div>
+            <div>
+              <dt>Forecast input</dt>
+              <dd id="battery-forecast-value">High</dd>
+            </div>
+            <div>
+              <dt>Safety override</dt>
+              <dd id="battery-safety-value">Normal</dd>
             </div>
           </dl>
         </div>
@@ -264,17 +333,71 @@
       </article>
     </section>
 
+    <!-- ================= OUTPUT LOAD TELEMETRY ================= -->
+    <section class="card output-telemetry" aria-labelledby="output-telemetry-heading">
+      <div class="output-telemetry__header">
+        <div>
+          <p class="output-telemetry__eyebrow">Charging output telemetry</p>
+          <h2 id="output-telemetry-heading">Voltage, current, and delivered load</h2>
+          <p>Output-side readings are separate from the Battery Bank measurements above.</p>
+        </div>
+        <span class="output-telemetry__source" id="output-telemetry-source">Live session simulation</span>
+      </div>
+
+      <div class="output-readings">
+        <article class="output-reading output-reading--total">
+          <p class="output-reading__label">Total output load</p>
+          <p class="output-reading__primary"><span id="output-total-power-value">90.0</span> <small>W</small></p>
+          <p class="output-reading__meta">Demand: <strong><span id="output-demand-power-value">90.0</span> W</strong></p>
+        </article>
+
+        <article class="output-reading">
+          <div class="output-reading__heading">
+            <p class="output-reading__label">AC outlets</p>
+            <span>PZEM-004T</span>
+          </div>
+          <dl class="electrical-values">
+            <div><dt>Voltage</dt><dd><span id="output-ac-voltage-value">220.0</span> V</dd></div>
+            <div><dt>Current</dt><dd><span id="output-ac-current-value">0.25</span> A</dd></div>
+            <div><dt>Load</dt><dd><span id="output-ac-power-value">54.0</span> W</dd></div>
+          </dl>
+        </article>
+
+        <article class="output-reading">
+          <div class="output-reading__heading">
+            <p class="output-reading__label">DC charging rail</p>
+            <span>DC sensor</span>
+          </div>
+          <dl class="electrical-values">
+            <div><dt>Voltage</dt><dd><span id="output-dc-voltage-value">5.00</span> V</dd></div>
+            <div><dt>Current</dt><dd><span id="output-dc-current-value">7.20</span> A</dd></div>
+            <div><dt>Load</dt><dd><span id="output-dc-power-value">36.0</span> W</dd></div>
+          </dl>
+        </article>
+
+        <article class="output-reading">
+          <p class="output-reading__label">Output energy today</p>
+          <p class="output-reading__primary"><span id="output-energy-value">0.00</span> <small id="output-energy-unit">Wh</small></p>
+          <p class="output-reading__meta"><strong id="output-active-channels-value">0 of 6</strong> channels active</p>
+        </article>
+      </div>
+
+      <p class="output-telemetry__note" id="output-telemetry-note">
+        Values respond to the ports currently in use and each session's power draw. Gentle load variation is simulated; the hardware build will replace it with PZEM-004T and DC sensor readings.
+      </p>
+    </section>
+
     <!-- ================= SUMMARY STRIP ================= -->
     <section class="summary" aria-label="Today at a glance">
       <article class="card">
         <p class="stat__value" id="devices-charged-value">0
 
         </p>
-        <p class="stat__label">Devices charged today</p>
+        <p class="stat__label">Devices connected today</p>
       </article>
 
       <article class="card">
-        <p class="stat__value"><span id="energy-delivered-value">3.2</span> kWh</p>
+        <p class="stat__value"><span id="energy-delivered-value">0.00</span> <span id="energy-delivered-unit">Wh</span></p>
         <p class="stat__label">Energy delivered today</p>
       </article>
 

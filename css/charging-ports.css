@@ -168,6 +168,22 @@
   outline-offset: 3px;
 }
 
+.port-card--energy-disabled,
+.port-card--energy-disabled:hover {
+  transform: none;
+  border-color: rgba(240, 128, 107, 0.25);
+  background: rgba(35, 27, 25, 0.78);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
+.port-card--energy-disabled .port-card__icon-box,
+.port-card--energy-disabled:hover .port-card__icon-box {
+  transform: none;
+  filter: grayscale(0.75);
+}
+
 /* Card - IN USE */
 .port-card--in-use {
   background: rgba(12, 29, 27, 0.85);

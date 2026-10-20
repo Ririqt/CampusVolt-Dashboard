@@ -1,7 +1,94 @@
 // CampusVolt Station Telemetry Controller (Information Page)
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-database.js";
 import { portsState } from "./modules/ports-state.js";
+import { telemetryStore } from "./modules/telemetry-store.js";
+
+const text = (id, value) => {
+  const element = document.getElementById(id);
+  if (element && value !== undefined && value !== null) element.textContent = String(value);
+};
+
+const titleCase = (value) => String(value || "")
+  .replace(/-/g, " ")
+  .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+function renderEnergy(kilowattHours, valueId, unitId) {
+  if (kilowattHours < 1) {
+    text(valueId, (kilowattHours * 1000).toFixed(2));
+    text(unitId, "Wh");
+  } else {
+    text(valueId, kilowattHours.toFixed(3));
+    text(unitId, "kWh");
+  }
+}
+
+function formatMinutes(minutes) {
+  if (!Number.isFinite(minutes)) return "—";
+  const rounded = Math.max(0, Math.round(minutes));
+  const hours = Math.floor(rounded / 60);
+  const mins = rounded % 60;
+  return hours ? `${hours}h ${String(mins).padStart(2, "0")}m` : `${mins} min`;
+}
+
+function formatTelemetryAge(timestamp) {
+  const seconds = Math.max(0, Math.round((Date.now() - Number(timestamp)) / 1000));
+  if (seconds < 5) return "Just now";
+  if (seconds < 60) return `${seconds}s ago`;
+  return `${Math.floor(seconds / 60)}m ago`;
+}
+
+function renderStationTelemetry(snapshot) {
+  const { battery, solar, weather, system, energyManagement } = snapshot;
+  const ring = document.getElementById("battery-ring");
+  const sourceBadge = document.getElementById("telemetry-source-badge");
+  const notice = document.getElementById("telemetry-notice");
+
+  text("battery-percent-value", Math.round(battery.soc));
+  if (ring) ring.style.setProperty("--progress", Math.max(0, Math.min(100, battery.soc)));
+  text("battery-status-value", titleCase(battery.status));
+  text("battery-est-full-value", battery.status === "charging" ? formatMinutes(battery.estimatedMinutesToFull) : "—");
+  text("battery-runtime-value", battery.status === "discharging" ? formatMinutes(battery.estimatedRuntimeMinutes) : "—");
+  text("battery-chemistry-value", battery.chemistry);
+  text("battery-voltage-value", battery.ratedVoltage.toFixed(1));
+  text("battery-capacity-ah-value", battery.ratedCapacityAh.toFixed(0));
+  text("battery-capacity-kwh-value", (battery.ratedEnergyWh / 1000).toFixed(2));
+  text("battery-pack-voltage-value", battery.voltage.toFixed(2));
+  text("battery-current-value", `${battery.currentA >= 0 ? "+" : ""}${battery.currentA.toFixed(2)}`);
+  text("battery-power-value", `${battery.powerW >= 0 ? "+" : ""}${Math.round(battery.powerW)}`);
+  text("battery-remaining-ah-value", battery.remainingAh.toFixed(1));
+  text("battery-remaining-kwh-value", (battery.remainingEnergyWh / 1000).toFixed(2));
+  text("battery-temperature-value", battery.temperatureC.toFixed(1));
+  text("battery-health-value", battery.healthPercent.toFixed(0));
+  text("battery-cycle-count-value", battery.cycleCount);
+  text("battery-cell-range-value", `${battery.cellMinVoltage.toFixed(2)}–${battery.cellMaxVoltage.toFixed(2)} V`);
+  text("battery-cell-delta-value", battery.cellDeltaMv.toFixed(0));
+  text("battery-protection-value", titleCase(battery.protection));
+  text("battery-telemetry-source", snapshot.source === "simulation" ? "Simulation model" : titleCase(snapshot.source));
+  text("battery-updated-value", formatTelemetryAge(system.updatedAt));
+  text("battery-message-id-value", system.messageId);
+  text("battery-latency-value", system.latencyMs);
+  text("battery-forecast-value", `${titleCase(weather.forecast)} (${weather.expectedSolarW} W expected)`);
+  text("battery-safety-value", titleCase(energyManagement.safetyState));
+
+  text("solar-power-value", Math.round(solar.powerW));
+  text("solar-today-value", (solar.energyTodayWh / 1000).toFixed(2));
+  text("solar-peak-value", Math.round(solar.peakPowerW));
+  text("solar-state-value", titleCase(solar.controllerState));
+  text("solar-telemetry-source", snapshot.source === "simulation" ? "Simulation model" : titleCase(snapshot.source));
+
+  text("telemetry-policy-mode", titleCase(energyManagement.mode));
+  text("telemetry-policy-reason", energyManagement.reason);
+  if (sourceBadge) sourceBadge.textContent = snapshot.source === "simulation" ? "Simulation" : titleCase(snapshot.source);
+  if (notice) {
+    notice.dataset.severity = energyManagement.maxLoadW === 0
+      ? "danger"
+      : (energyManagement.mode === "normal-mode" ? "normal" : "warning");
+  }
+
+  const statusName = document.getElementById("connection-name");
+  const statusDot = document.getElementById("connection-dot");
+  if (statusName) statusName.textContent = system.bmsConnected ? "Demo telemetry" : "BMS disconnected";
+  if (statusDot) statusDot.classList.toggle("live-pill__dot--offline", !system.bmsConnected);
+}
 
 // 1. Sync live ports state with Information page overview strip
 const updatePortsTelemetry = () => {
@@ -9,45 +96,38 @@ const updatePortsTelemetry = () => {
   const totalEl = document.getElementById("ports-total-value");
   if (activeEl) activeEl.textContent = portsState.getActiveCount().toString();
   if (totalEl) totalEl.textContent = portsState.getTotalCount().toString();
+  text("output-active-channels-value", `${portsState.getActiveCount()} of ${portsState.getTotalCount()}`);
+
+  const dailyStats = portsState.getDailyStats();
+  const output = portsState.getLiveOutputTelemetry();
+  text("devices-charged-value", dailyStats.devicesConnected);
+  text("output-total-power-value", output.totalPowerW.toFixed(1));
+  text("output-demand-power-value", output.demandPowerW.toFixed(1));
+  text("output-ac-voltage-value", output.ac.voltageV.toFixed(1));
+  text("output-ac-current-value", output.ac.currentA.toFixed(2));
+  text("output-ac-power-value", output.ac.powerW.toFixed(1));
+  text("output-dc-voltage-value", output.dc.voltageV.toFixed(2));
+  text("output-dc-current-value", output.dc.currentA.toFixed(2));
+  text("output-dc-power-value", output.dc.powerW.toFixed(1));
+  text("output-telemetry-source", "Live session simulation");
+  renderEnergy(dailyStats.energyDeliveredKWh, "energy-delivered-value", "energy-delivered-unit");
+  renderEnergy(dailyStats.energyDeliveredKWh, "output-energy-value", "output-energy-unit");
 };
 
 updatePortsTelemetry();
 portsState.addEventListener("port-status-changed", updatePortsTelemetry);
+portsState.addEventListener("session-tick", updatePortsTelemetry);
 portsState.addEventListener("session-completed", updatePortsTelemetry);
 portsState.addEventListener("ports-synced", updatePortsTelemetry);
+portsState.addEventListener("daily-stats-changed", updatePortsTelemetry);
 
-// Firebase Configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyDTVOxATLW_ScNwUFTf9No6EhMz_m2P2OY",
-  authDomain: "campusvolt.firebaseapp.com",
-  projectId: "campusvolt",
-  storageBucket: "campusvolt.firebasestorage.app",
-  messagingSenderId: "398807888",
-  appId: "1:398807888:web:e04775c07d2486f60c5255"
-};
-
-const solarPowerEl = document.getElementById("solar-power-value");
-
-// Keep unfinished Firebase telemetry from blocking the independent weather feed.
-try {
-  const app = initializeApp(firebaseConfig);
-  const database = getDatabase(app);
-  const solarPowerRef = ref(database, "CampusVolt/station01/solarPower");
-
-  if (solarPowerEl) {
-    onValue(solarPowerRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data !== null) {
-        solarPowerEl.textContent = data;
-        console.log(`New solar power value received: ${data}`);
-      } else {
-        console.log("No data found at this path.");
-      }
-    });
-  }
-} catch (error) {
-  console.warn("CampusVolt Firebase telemetry is not configured yet:", error);
-}
+renderStationTelemetry(telemetryStore.getSnapshot());
+telemetryStore.addEventListener("telemetry-changed", (event) => renderStationTelemetry(event.detail.snapshot));
+window.setInterval(() => {
+  const current = telemetryStore.getSnapshot();
+  text("battery-updated-value", formatTelemetryAge(current.system.updatedAt));
+  updatePortsTelemetry();
+}, 5000);
 
 // Live weather forecast for the fixed CampusVolt kiosk location.
 const WEATHER_API_URL = new URL("https://api.open-meteo.com/v1/forecast");
@@ -219,4 +299,3 @@ const cachedWeather = readCachedWeather();
 if (cachedWeather) renderWeather(cachedWeather, { cached: true });
 updateWeather();
 window.setInterval(updateWeather, WEATHER_REFRESH_MS);
-

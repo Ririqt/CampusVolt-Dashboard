@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CampusVolt • Telemetry Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/simulator.css">
+  <script type="module" src="../js/simulator-page.js?v=3"></script>
+</head>
+
+<body>
+  <header class="navbar">
+    <div class="container navbar__inner">
+      <a class="brand" href="dashboard.html" aria-label="CampusVolt dashboard">
+        <svg class="brand__logo" viewBox="0 0 32 32" aria-hidden="true">
+          <defs>
+            <linearGradient id="logo-gradient" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#b7e36a" />
+              <stop offset="1" stop-color="#2fa58c" />
+            </linearGradient>
+          </defs>
+          <path d="M16 2.5 4.5 6.6v8.2c0 7.2 4.7 12.4 11.5 14.7 6.8-2.3 11.5-7.5 11.5-14.7V6.6L16 2.5z" fill="url(#logo-gradient)" />
+          <path d="M17.5 7.5 11 17h4.2l-.8 7L21 14.5h-4.4l.9-7z" fill="#0f1614" />
+        </svg>
+        <span>CampusVolt</span>
+      </a>
+
+      <nav aria-label="Primary">
+        <ul class="nav-links">
+          <li><a href="dashboard.html">Dashboard</a></li>
+          <li><a href="information.html">Information</a></li>
+          <li><a href="settings.html">Settings</a></li>
+          <li><a href="team.html">The Team</a></li>
+        </ul>
+      </nav>
+
+      <div class="mode-pill" role="status">
+        <span class="mode-pill__dot" id="simulator-status-dot"></span>
+        <span id="simulator-status">Simulation paused</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="container simulator-layout">
+    <section class="page-header">
+      <div>
+        <p class="eyebrow">Hardware-independent demonstration</p>
+        <h1>Station telemetry simulator</h1>
+        <p>Drive the dashboard with realistic solar, battery, load, and safety conditions before the ESP32 is connected.</p>
+      </div>
+      <a class="preview-link" href="information.html">Open live information view →</a>
+    </section>
+
+    <section class="panel" aria-labelledby="scenario-heading">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Step 1</p>
+          <h2 id="scenario-heading">Choose a demonstration scenario</h2>
+        </div>
+        <p class="panel__description" id="scenario-description">Select a condition to update the simulated station.</p>
+      </div>
+      <div class="scenario-grid" id="scenario-grid"></div>
+    </section>
+
+    <section class="control-grid">
+      <article class="panel control-panel">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Step 2</p>
+            <h2>Run the model</h2>
+          </div>
+        </div>
+
+        <div class="range-control">
+          <div class="range-control__header">
+            <label for="solar-input">Solar generation</label>
+            <output id="solar-output" for="solar-input">285 W</output>
+          </div>
+          <input id="solar-input" type="range" min="0" max="450" step="5" value="285">
+        </div>
+
+        <div class="range-control">
+          <div class="range-control__header">
+            <label for="load-input">Charging load</label>
+            <output id="load-output" for="load-input">90 W</output>
+          </div>
+          <input id="load-input" type="range" min="0" max="456" step="5" value="90">
+        </div>
+
+        <div class="range-control">
+          <div class="range-control__header">
+            <label for="forecast-select">Weather forecast input</label>
+          </div>
+          <select id="forecast-select" class="forecast-select">
+            <option value="high">High expected solar</option>
+            <option value="moderate">Moderate expected solar</option>
+            <option value="low">Low expected solar</option>
+            <option value="none">No expected solar</option>
+            <option value="cached">Cached forecast fallback</option>
+          </select>
+        </div>
+
+        <div class="run-controls">
+          <label for="speed-select">Simulation speed</label>
+          <select id="speed-select">
+            <option value="1">1× real time</option>
+            <option value="60" selected>60× (1 minute/second)</option>
+            <option value="300">300× (5 minutes/second)</option>
+          </select>
+          <button class="button button--primary" id="start-simulation" type="button">Start</button>
+          <button class="button" id="pause-simulation" type="button">Pause</button>
+          <button class="button button--quiet" id="reset-simulation" type="button">Reset</button>
+        </div>
+      </article>
+
+      <article class="panel decision-panel" aria-live="polite">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Energy-management decision</p>
+            <h2 id="policy-mode">Normal operation</h2>
+          </div>
+          <span class="policy-badge" id="policy-badge">Normal</span>
+        </div>
+        <p class="decision-panel__reason" id="policy-reason"></p>
+        <dl class="decision-stats">
+          <div><dt>ANN input: weather</dt><dd id="policy-weather">High</dd></div>
+          <div><dt>Expected scenario mode</dt><dd id="policy-expected">Normal Mode</dd></div>
+          <div><dt>Decision source</dt><dd id="policy-controller">Rule-based demo</dd></div>
+          <div><dt>Allowed station load</dt><dd id="policy-limit">456 W</dd></div>
+          <div><dt>Charging access</dt><dd id="policy-access">All ports</dd></div>
+          <div><dt>Safety override</dt><dd id="policy-safety">Normal</dd></div>
+          <div><dt>Message latency</dt><dd id="policy-latency">0 ms</dd></div>
+        </dl>
+      </article>
+    </section>
+
+    <section class="telemetry-grid" aria-label="Current simulated telemetry">
+      <article class="metric-card metric-card--battery">
+        <p class="metric-card__label">Battery SoC</p>
+        <p class="metric-card__value"><span id="metric-soc">85</span><small>%</small></p>
+        <p class="metric-card__meta" id="metric-battery-state">Charging</p>
+      </article>
+      <article class="metric-card">
+        <p class="metric-card__label">Remaining energy</p>
+        <p class="metric-card__value"><span id="metric-energy">1.09</span><small>kWh</small></p>
+        <p class="metric-card__meta">of 1.28 kWh rated</p>
+      </article>
+      <article class="metric-card metric-card--solar">
+        <p class="metric-card__label">Solar generation</p>
+        <p class="metric-card__value"><span id="metric-solar">285</span><small>W</small></p>
+        <p class="metric-card__meta" id="metric-solar-state">Generating</p>
+      </article>
+      <article class="metric-card">
+        <p class="metric-card__label">Charging load</p>
+        <p class="metric-card__value"><span id="metric-load">90</span><small>W</small></p>
+        <p class="metric-card__meta" id="metric-net-power">+195 W to battery</p>
+      </article>
+      <article class="metric-card">
+        <p class="metric-card__label">Battery temperature</p>
+        <p class="metric-card__value"><span id="metric-temperature">30</span><small>°C</small></p>
+        <p class="metric-card__meta" id="metric-temperature-state">Normal</p>
+      </article>
+      <article class="metric-card">
+        <p class="metric-card__label">Estimated time</p>
+        <p class="metric-card__value metric-card__value--compact" id="metric-estimate">1h 06m</p>
+        <p class="metric-card__meta" id="metric-estimate-label">until full</p>
+      </article>
+    </section>
+
+    <section class="panel history-panel">
+      <div class="panel__header">
+        <div>
+          <p class="eyebrow">Research capture</p>
+          <h2>Recent telemetry history</h2>
+        </div>
+        <div class="history-actions">
+          <button class="button" id="export-history" type="button">Export CSV</button>
+          <button class="button button--quiet" id="clear-history" type="button">Clear</button>
+        </div>
+      </div>
+      <div class="chart-legend" aria-hidden="true">
+        <span><i class="legend-soc"></i>SoC</span>
+        <span><i class="legend-solar"></i>Solar</span>
+        <span><i class="legend-load"></i>Load</span>
+      </div>
+      <svg class="history-chart" id="history-chart" viewBox="0 0 800 190" role="img" aria-label="Recent state of charge, solar power, and charging load history"></svg>
+      <p class="empty-history" id="empty-history">Start the simulation to collect telemetry points.</p>
+    </section>
+  </main>
+</body>
+
+</html>
