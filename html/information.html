@@ -8,9 +8,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/information.css">
+  <link rel="stylesheet" href="../css/information.css?v=3">
   <script type="module" src="../js/campusvolt-telemetry.js"></script>
   <script type="module" src="../js/modules/kiosk-preferences.js"></script>
+  <script type="module" src="../js/information-interactions.js?v=3"></script>
 </head>
 
 <body>
@@ -61,7 +62,8 @@
     <section class="metrics" aria-label="Station overview">
 
       <!-- Battery bank -->
-      <article class="card card--battery">
+      <article class="card card--battery metric-card" tabindex="0" role="button" aria-expanded="false"
+        aria-controls="battery-details" data-metric-card>
         <h2 class="card__title">Battery bank</h2>
         <p class="card__subtitle">LiFePO4 • 12V 100Ah (1.28 kWh)</p>
 
@@ -83,10 +85,26 @@
             <li><span class="muted">Runtime left:</span> <strong id="battery-runtime-value">~9h</strong></li>
           </ul>
         </div>
+
+        <div class="metric-details" id="battery-details" aria-hidden="true" hidden>
+          <div class="metric-details__heading">
+            <p class="metric-details__eyebrow">Battery telemetry</p>
+            <h3>Storage health and capacity</h3>
+          </div>
+          <dl class="metric-details__grid">
+            <div><dt>Chemistry</dt><dd id="battery-chemistry-value">LiFePO4</dd></div>
+            <div><dt>Nominal voltage</dt><dd><span id="battery-voltage-value">12</span> V</dd></div>
+            <div><dt>Rated capacity</dt><dd><span id="battery-capacity-ah-value">100</span> Ah</dd></div>
+            <div><dt>Energy capacity</dt><dd><span id="battery-capacity-kwh-value">1.28</span> kWh</dd></div>
+            <div><dt>Protection state</dt><dd id="battery-protection-value">Normal</dd></div>
+            <div><dt>Telemetry source</dt><dd id="battery-telemetry-source">ESP32 · pending</dd></div>
+          </dl>
+        </div>
       </article>
 
       <!-- Solar energy harvest -->
-      <article class="card card--solar">
+      <article class="card card--solar metric-card" tabindex="0" role="button" aria-expanded="false"
+        aria-controls="solar-details" data-metric-card>
         <h2 class="card__title">Solar energy harvest</h2>
         <p class="card__subtitle">Total power generated right now</p>
 
@@ -106,10 +124,26 @@
             <dd><span id="solar-peak-value">450</span> W</dd>
           </div>
         </dl>
+
+        <div class="metric-details" id="solar-details" aria-hidden="true" hidden>
+          <div class="metric-details__heading">
+            <p class="metric-details__eyebrow">Generation telemetry</p>
+            <h3>Panel and controller performance</h3>
+          </div>
+          <dl class="metric-details__grid">
+            <div><dt>Array configuration</dt><dd id="solar-array-config-value">1 × 450W</dd></div>
+            <div><dt>System voltage</dt><dd><span id="solar-voltage-value">12</span> V</dd></div>
+            <div><dt>Charge controller</dt><dd id="solar-controller-value">MPPT</dd></div>
+            <div><dt>Current utilization</dt><dd><span id="solar-utilization-value">63</span>%</dd></div>
+            <div><dt>Operating state</dt><dd id="solar-state-value">Generating</dd></div>
+            <div><dt>Telemetry source</dt><dd id="solar-telemetry-source">ESP32 · pending</dd></div>
+          </dl>
+        </div>
       </article>
 
       <!-- Weather forecast -->
-      <article class="card card--weather">
+      <article class="card card--weather metric-card" tabindex="0" role="button" aria-expanded="false"
+        aria-controls="weather-details" data-metric-card>
         <h2 class="card__title">Weather forecast</h2>
 
         <div class="weather__now">
@@ -130,6 +164,21 @@
             <dd id="weather-source">OpenWeatherAPI</dd>
           </div>
         </dl>
+
+        <div class="metric-details" id="weather-details" aria-hidden="true" hidden>
+          <div class="metric-details__heading">
+            <p class="metric-details__eyebrow">Environmental telemetry</p>
+            <h3>Conditions affecting solar harvest</h3>
+          </div>
+          <dl class="metric-details__grid">
+            <div><dt>Current condition</dt><dd id="weather-detail-condition">Sunny</dd></div>
+            <div><dt>Station location</dt><dd id="weather-detail-location">Manila, PUP CEA</dd></div>
+            <div><dt>Solar outlook</dt><dd id="weather-detail-solar">High</dd></div>
+            <div><dt>Forecast provider</dt><dd id="weather-detail-source">OpenWeatherAPI</dd></div>
+            <div><dt>Sensor status</dt><dd id="weather-sensor-status">Awaiting hardware</dd></div>
+            <div><dt>Telemetry source</dt><dd id="weather-telemetry-source">ESP32 · pending</dd></div>
+          </dl>
+        </div>
       </article>
     </section>
 
@@ -289,6 +338,23 @@
     </section>
 
   </main>
+
+  <dialog class="metric-modal" id="metric-modal" aria-labelledby="metric-modal-title">
+    <div class="metric-modal__surface">
+      <div class="metric-modal__header">
+        <div>
+          <p class="metric-modal__eyebrow">CampusVolt live data</p>
+          <h2 id="metric-modal-title">System details</h2>
+        </div>
+        <button class="metric-modal__close" id="metric-modal-close" type="button" aria-label="Close details">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6 6 18"></path>
+          </svg>
+        </button>
+      </div>
+      <div class="metric-modal__content" id="metric-modal-content"></div>
+    </div>
+  </dialog>
 
 </body>
 </html>
