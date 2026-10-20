@@ -268,10 +268,13 @@ In this mode, both AC outlets are unavailable. Type-C, Micro USB, Lightning, and
 Activated when:
 
 - SoC is below 50% **and** the forecast is `Low` or `None`
+- A requested station load exceeds 250 W while SoC is below 60% and solar generation is below the requested load plus a 30 W reserve margin
 
 Maximum permitted station load: **150 W**.
 
 Survival Eco has priority when conditions overlap.
+
+The rapid-discharge condition is latched. Once triggered, Conservation Mode remains active even if demand falls below 250 W. The latch clears only after active solar charging replenishes the battery to at least 65% SoC. This 60% trigger and 65% release hysteresis prevents repeated relay switching near the threshold. Safety overrides and Survival Eco continue to take priority while the latch is stored in shared telemetry state.
 
 ### 3. Normal Mode
 

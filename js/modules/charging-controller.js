@@ -6,7 +6,7 @@
 import { portsState } from "./ports-state.js";
 import { PortsRenderer } from "./ports-renderer.js";
 import { ChargingModal } from "./charging-modal.js";
-import { telemetryStore } from "./telemetry-store.js?v=3";
+import { telemetryStore } from "./telemetry-store.js?v=4";
 import { kioskPreferences } from "./kiosk-preferences.js?v=2";
 
 export class ChargingPortsController {

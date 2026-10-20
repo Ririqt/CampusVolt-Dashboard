@@ -1,5 +1,5 @@
 import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
-import { telemetryStore } from "./modules/telemetry-store.js?v=3";
+import { telemetryStore } from "./modules/telemetry-store.js?v=4";
 import { SIMULATION_SCENARIOS, TelemetrySimulator } from "./modules/telemetry-simulator.js";
 
 const simulator = new TelemetrySimulator(telemetryStore);

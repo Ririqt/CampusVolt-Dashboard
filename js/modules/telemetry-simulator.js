@@ -1,5 +1,5 @@
-import { DEFAULT_TELEMETRY, telemetryStore } from "./telemetry-store.js?v=3";
-import { deriveEnergyPolicy } from "./energy-policy.js?v=3";
+import { DEFAULT_TELEMETRY, telemetryStore } from "./telemetry-store.js?v=4";
+import { deriveEnergyPolicy } from "./energy-policy.js?v=4";
 
 export const SIMULATION_SCENARIOS = Object.freeze({
   sunny: {

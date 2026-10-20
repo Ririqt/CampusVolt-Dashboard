@@ -1,6 +1,35 @@
+const RAPID_DISCHARGE_LOAD_W = 250;
+const RAPID_DISCHARGE_SOC_PERCENT = 60;
+const RAPID_DISCHARGE_SOLAR_MARGIN_W = 30;
+const RAPID_DISCHARGE_RELEASE_SOC_PERCENT = 65;
+
 export function deriveEnergyPolicy(snapshot) {
-  const { battery, system, weather } = snapshot;
+  const { battery, load, solar, system, weather } = snapshot;
   const poorForecast = weather.forecast === "low" || weather.forecast === "none";
+  const previousPolicy = snapshot.energyManagement || {};
+  const requestedLoadW = Math.max(
+    0,
+    Number(load.demandPowerW) || 0,
+    Number(load.totalPowerW) || 0
+  );
+  const solarPowerW = Math.max(0, Number(solar.powerW) || 0);
+  const rapidDischargeEvent = requestedLoadW > RAPID_DISCHARGE_LOAD_W
+    && battery.soc < RAPID_DISCHARGE_SOC_PERCENT
+    && solarPowerW < requestedLoadW + RAPID_DISCHARGE_SOLAR_MARGIN_W;
+  const solarRecoveryComplete = battery.soc >= RAPID_DISCHARGE_RELEASE_SOC_PERCENT
+    && battery.powerW > 5
+    && solarPowerW >= requestedLoadW;
+  let rapidDischargeLatched = Boolean(previousPolicy.rapidDischargeLatched);
+  let rapidDischargeTriggeredAt = previousPolicy.rapidDischargeTriggeredAt || null;
+
+  if (rapidDischargeEvent) {
+    rapidDischargeLatched = true;
+    rapidDischargeTriggeredAt ||= Number(system.updatedAt) || Date.now();
+  } else if (rapidDischargeLatched && solarRecoveryComplete) {
+    rapidDischargeLatched = false;
+    rapidDischargeTriggeredAt = null;
+  }
+
   let policy;
 
   if (battery.soc < 25 || (poorForecast && battery.soc < 30)) {
@@ -8,6 +37,12 @@ export function deriveEnergyPolicy(snapshot) {
       mode: "survival-eco-mode",
       maxLoadW: 60,
       reason: "Low reserve or weak forecast pauses AC outlets while reduced-power DC charging remains available.",
+    };
+  } else if (rapidDischargeLatched) {
+    policy = {
+      mode: "conservation-mode",
+      maxLoadW: 150,
+      reason: "Rapid discharge protection is latched until solar charging replenishes the battery to 65% SoC.",
     };
   } else if (battery.soc < 50 && poorForecast) {
     policy = {
@@ -25,6 +60,8 @@ export function deriveEnergyPolicy(snapshot) {
 
   policy.controller = "rule-based-demo";
   policy.safetyState = "normal";
+  policy.rapidDischargeLatched = rapidDischargeLatched;
+  policy.rapidDischargeTriggeredAt = rapidDischargeTriggeredAt;
 
   if (!system.bmsConnected) {
     policy.safetyState = "monitoring-unavailable";

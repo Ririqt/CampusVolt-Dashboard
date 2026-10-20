@@ -1,4 +1,4 @@
-import { deriveEnergyPolicy } from "./energy-policy.js?v=3";
+import { deriveEnergyPolicy } from "./energy-policy.js?v=4";
 
 const STORAGE_KEY = "cv_station_telemetry_v1";
 const HISTORY_KEY = "cv_station_telemetry_history_v1";
@@ -71,6 +71,8 @@ export const DEFAULT_TELEMETRY = Object.freeze({
     controller: "rule-based-demo",
     maxLoadW: 456,
     reason: "No Conservation or Survival Eco trigger is active, so full service remains available.",
+    rapidDischargeLatched: false,
+    rapidDischargeTriggeredAt: null,
   },
   system: {
     connected: true,
