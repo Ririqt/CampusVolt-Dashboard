@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/settings.css">
-  <script type="module" src="../js/modules/kiosk-preferences.js"></script>
+  <script type="module" src="../js/modules/kiosk-preferences.js?v=2"></script>
 </head>
 
 <body>
@@ -183,10 +183,20 @@
           <div class="settings-rows">
             <div class="settings-row">
               <div class="settings-row__info">
+                <h3 class="settings-row__title">Demonstration mode</h3>
+                <p class="settings-row__desc" id="demo-mode-description">Enables simulated telemetry, scenarios, and energy-policy restrictions</p>
+              </div>
+              <label class="toggle-switch">
+                <input type="checkbox" id="toggle-demo-mode" checked aria-label="Toggle demonstration mode">
+                <span class="toggle-slider"></span>
+              </label>
+            </div>
+            <div class="settings-row">
+              <div class="settings-row__info">
                 <h3 class="settings-row__title">Telemetry simulator</h3>
                 <p class="settings-row__desc">Run battery, solar, load, and fault scenarios without the ESP32</p>
               </div>
-              <a class="btn-action" href="../html/simulator.html">Open simulator</a>
+              <a class="btn-action" id="btn-open-simulator" href="../html/simulator.html">Open simulator</a>
             </div>
           </div>
         </div>
@@ -226,7 +236,7 @@
   <div id="settings-toast" class="settings-toast" role="status" aria-live="polite"></div>
 
   <script type="module">
-    import { kioskPreferences } from "../js/modules/kiosk-preferences.js";
+    import { kioskPreferences } from "../js/modules/kiosk-preferences.js?v=2";
     import { i18n } from "../js/modules/i18n.js";
 
     const toast = document.getElementById("settings-toast");
@@ -278,7 +288,33 @@
       });
     });
 
-    // 4. Action buttons
+    // 4. Demonstration mode
+    const demoDescription = document.getElementById("demo-mode-description");
+    const demoToggle = document.getElementById("toggle-demo-mode");
+    const simulatorLink = document.getElementById("btn-open-simulator");
+    const updateDemoControls = () => {
+      const enabled = kioskPreferences.isDemoModeEnabled();
+      if (demoToggle) demoToggle.checked = enabled;
+      if (demoDescription) {
+        demoDescription.textContent = enabled
+          ? "Simulated telemetry, scenarios, and energy-policy restrictions are enabled"
+          : "Classic interface mode: charging remains usable without simulator restrictions";
+      }
+      if (simulatorLink) {
+        simulatorLink.hidden = !enabled;
+      }
+    };
+
+    demoToggle?.addEventListener("change", () => {
+      const enabled = demoToggle.checked;
+      kioskPreferences.setDemoMode(enabled);
+      updateDemoControls();
+      showToast(enabled ? "Demonstration mode enabled" : "Demonstration mode disabled");
+    });
+    kioskPreferences.addEventListener("demo-mode-changed", updateDemoControls);
+    updateDemoControls();
+
+    // 5. Action buttons
     document.getElementById("btn-reconnect")?.addEventListener("click", () => {
       showToast("Reconnected to CampusVolt-AP (Signal: -48dBm)");
     });

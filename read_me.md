@@ -158,7 +158,28 @@ The Settings page contains:
 - Link to the telemetry simulator
 - Report Issue and About actions
 
-Text size, brightness, and language are functional and stored locally. The action buttons show demonstration toasts. `CampusVolt-AP`, cloud sync, issue dispatch, sound output, and alert output are placeholders until their hardware or backend services are implemented.
+Text size, brightness, language, and the Demonstration Mode switch are functional and stored locally. The action buttons show demonstration toasts. `CampusVolt-AP`, cloud sync, issue dispatch, sound output, and alert output are placeholders until their hardware or backend services are implemented.
+
+#### Demonstration Mode switch
+
+Demonstration Mode is enabled by default.
+
+When it is **On**:
+
+- Simulated station telemetry and the policy status strip are visible.
+- The Charging Output Telemetry panel is visible.
+- Rule-based mode limits can restrict new charging sessions.
+- The Simulator link and controls are available.
+
+When it is **Off**:
+
+- Demo-only telemetry banners and output panels are hidden.
+- Charging ports remain usable without simulated policy restrictions.
+- The Simulator shortcut is hidden and direct Simulator controls are disabled.
+- The navigation connection label changes to `Local interface`.
+- Charging sessions, payment dialogs, timers, daily counters, Information content, Settings, and Team features remain usable.
+
+Turning Demo Mode off does not delete saved simulator data or active charging sessions. Enabling it again restores the current saved demonstration state.
 
 `CampusVolt-AP` is intended to be the ESP32-created local Wi-Fi network. It does not represent a real access point in the current version.
 
@@ -327,6 +348,7 @@ The program currently stores its state only in the browser. Important keys inclu
 | `cv_font_scale`                   | Text-size preference                   |
 | `cv_brightness`                   | Brightness preference                  |
 | `cv_language`                     | English/Filipino preference            |
+| `cv_demo_mode`                    | Demonstration Mode on/off state         |
 
 Clearing browser site data resets the saved demonstration state.
 

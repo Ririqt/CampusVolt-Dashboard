@@ -6,17 +6,31 @@
 
 import { i18n } from "./i18n.js";
 
-class KioskPreferences {
+class KioskPreferences extends EventTarget {
   constructor() {
+    super();
     this.fontScale = parseInt(localStorage.getItem("cv_font_scale") || "100", 10);
     this.brightness = localStorage.getItem("cv_brightness") || "auto";
     this.soundEnabled = localStorage.getItem("cv_sound") !== "false"; // default true
     this.lowBatteryAlert = localStorage.getItem("cv_low_battery") !== "false";
+    this.demoModeEnabled = localStorage.getItem("cv_demo_mode") !== "false";
+
+    if (typeof window !== "undefined") {
+      window.addEventListener("storage", (event) => {
+        if (event.key !== "cv_demo_mode") return;
+        this.demoModeEnabled = event.newValue !== "false";
+        this.applyDemoMode();
+        this.dispatchEvent(new CustomEvent("demo-mode-changed", {
+          detail: { enabled: this.demoModeEnabled },
+        }));
+      });
+    }
   }
 
   init() {
     this.applyFontScale(this.fontScale);
     this.applyBrightness(this.brightness);
+    this.applyDemoMode();
     i18n.applyToDOM();
   }
 
@@ -63,6 +77,23 @@ class KioskPreferences {
 
   getLanguage() {
     return i18n.getLanguage();
+  }
+
+  setDemoMode(enabled) {
+    this.demoModeEnabled = Boolean(enabled);
+    localStorage.setItem("cv_demo_mode", String(this.demoModeEnabled));
+    this.applyDemoMode();
+    this.dispatchEvent(new CustomEvent("demo-mode-changed", {
+      detail: { enabled: this.demoModeEnabled },
+    }));
+  }
+
+  isDemoModeEnabled() {
+    return this.demoModeEnabled;
+  }
+
+  applyDemoMode() {
+    document.documentElement.dataset.demoMode = this.demoModeEnabled ? "on" : "off";
   }
 }
 

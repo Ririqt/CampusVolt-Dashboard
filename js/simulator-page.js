@@ -1,4 +1,4 @@
-import { kioskPreferences } from "./modules/kiosk-preferences.js";
+import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
 import { telemetryStore } from "./modules/telemetry-store.js";
 import { SIMULATION_SCENARIOS, TelemetrySimulator } from "./modules/telemetry-simulator.js";
 
@@ -39,7 +39,20 @@ const elements = {
   estimateLabel: byId("metric-estimate-label"),
   chart: byId("history-chart"),
   emptyHistory: byId("empty-history"),
+  disabledNotice: byId("demo-disabled-notice"),
 };
+
+function applyDemoAvailability() {
+  const enabled = kioskPreferences.isDemoModeEnabled();
+  const layout = document.querySelector(".simulator-layout");
+  if (layout) layout.dataset.disabled = String(!enabled);
+  if (elements.disabledNotice) elements.disabledNotice.hidden = enabled;
+  document.querySelectorAll(".simulator-layout button, .simulator-layout input, .simulator-layout select").forEach((control) => {
+    control.disabled = !enabled;
+  });
+  if (!enabled) simulator.pause();
+  render(telemetryStore.getSnapshot());
+}
 
 function titleCase(value) {
   return String(value || "").replace(/-/g, " ").replace(/\b\w/g, (letter) => letter.toUpperCase());
@@ -95,7 +108,9 @@ function render(snapshot) {
   renderScenarios(snapshot.scenario);
   elements.scenarioDescription.textContent = scenario?.description || "Custom simulated station conditions.";
 
-  elements.status.textContent = system.running ? `Simulation running · ${system.speed}×` : "Simulation paused";
+  elements.status.textContent = !kioskPreferences.isDemoModeEnabled()
+    ? "Demonstration Mode disabled"
+    : (system.running ? `Simulation running · ${system.speed}×` : "Simulation paused");
   elements.statusDot.classList.toggle("is-running", system.running);
   elements.speed.value = String(system.speed);
   elements.forecast.value = weather.forecast;
@@ -191,8 +206,10 @@ byId("export-history").addEventListener("click", () => {
 });
 
 telemetryStore.addEventListener("telemetry-changed", (event) => render(event.detail.snapshot));
+kioskPreferences.addEventListener("demo-mode-changed", applyDemoAvailability);
 
 const initial = telemetryStore.getSnapshot();
 simulator.setInputs({ solarPowerW: initial.solar.powerW, loadPowerW: initial.load.totalPowerW });
-if (initial.system.running) simulator.start(initial.system.speed);
+if (initial.system.running && kioskPreferences.isDemoModeEnabled()) simulator.start(initial.system.speed);
 render(telemetryStore.getSnapshot());
+applyDemoAvailability();

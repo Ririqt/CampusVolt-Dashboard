@@ -1,6 +1,7 @@
 // CampusVolt Station Telemetry Controller (Information Page)
 import { portsState } from "./modules/ports-state.js";
 import { telemetryStore } from "./modules/telemetry-store.js";
+import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
 
 const text = (id, value) => {
   const element = document.getElementById(id);
@@ -86,7 +87,9 @@ function renderStationTelemetry(snapshot) {
 
   const statusName = document.getElementById("connection-name");
   const statusDot = document.getElementById("connection-dot");
-  if (statusName) statusName.textContent = system.bmsConnected ? "Demo telemetry" : "BMS disconnected";
+  if (statusName) statusName.textContent = kioskPreferences.isDemoModeEnabled()
+    ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
+    : "Local interface";
   if (statusDot) statusDot.classList.toggle("live-pill__dot--offline", !system.bmsConnected);
 }
 
@@ -123,6 +126,7 @@ portsState.addEventListener("daily-stats-changed", updatePortsTelemetry);
 
 renderStationTelemetry(telemetryStore.getSnapshot());
 telemetryStore.addEventListener("telemetry-changed", (event) => renderStationTelemetry(event.detail.snapshot));
+kioskPreferences.addEventListener("demo-mode-changed", () => renderStationTelemetry(telemetryStore.getSnapshot()));
 window.setInterval(() => {
   const current = telemetryStore.getSnapshot();
   text("battery-updated-value", formatTelemetryAge(current.system.updatedAt));

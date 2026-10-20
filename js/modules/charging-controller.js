@@ -7,6 +7,7 @@ import { portsState } from "./ports-state.js";
 import { PortsRenderer } from "./ports-renderer.js";
 import { ChargingModal } from "./charging-modal.js";
 import { telemetryStore } from "./telemetry-store.js";
+import { kioskPreferences } from "./kiosk-preferences.js?v=2";
 
 export class ChargingPortsController {
   constructor(containerId = "charging-ports-container") {
@@ -42,6 +43,9 @@ export class ChargingPortsController {
     this._applyEnergyPolicy(this.telemetry.getSnapshot());
     this.telemetry.addEventListener("telemetry-changed", (event) => {
       this._applyEnergyPolicy(event.detail.snapshot);
+    });
+    kioskPreferences.addEventListener("demo-mode-changed", () => {
+      this._applyEnergyPolicy(this.telemetry.getSnapshot());
     });
   }
 
@@ -112,6 +116,7 @@ export class ChargingPortsController {
   }
 
   _isPortAllowed(port, snapshot) {
+    if (!kioskPreferences.isDemoModeEnabled()) return true;
     const policy = snapshot.energyManagement;
     if (policy.maxLoadW <= 0) return false;
     const ratedPowerByType = {

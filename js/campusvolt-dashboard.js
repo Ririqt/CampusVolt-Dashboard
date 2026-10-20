@@ -1,6 +1,6 @@
 // CampusVolt Dashboard Main Controller
 import { initChargingPorts } from "./modules/charging-controller.js";
-import { kioskPreferences } from "./modules/kiosk-preferences.js";
+import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
 import { telemetryStore } from "./modules/telemetry-store.js";
 
 // -------------------------------------------------------------
@@ -41,9 +41,12 @@ function renderStationStatus(snapshot) {
   if (forecast) forecast.textContent = titleCase(weather.forecast);
   if (latency) latency.textContent = system.latencyMs;
   if (source) source.title = `${system.messageId} · updated ${new Date(system.updatedAt).toLocaleTimeString()}`;
-  if (connectionName) connectionName.textContent = system.bmsConnected ? "Demo telemetry" : "BMS disconnected";
+  if (connectionName) connectionName.textContent = kioskPreferences.isDemoModeEnabled()
+    ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
+    : "Local interface";
   if (connectionDot) connectionDot.classList.toggle("live-pill__dot--offline", !system.bmsConnected);
 }
 
 renderStationStatus(telemetryStore.getSnapshot());
 telemetryStore.addEventListener("telemetry-changed", (event) => renderStationStatus(event.detail.snapshot));
+kioskPreferences.addEventListener("demo-mode-changed", () => renderStationStatus(telemetryStore.getSnapshot()));

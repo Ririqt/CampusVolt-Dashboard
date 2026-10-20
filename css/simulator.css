@@ -122,3 +122,23 @@ select, .button { min-height: 38px; padding: 8px 13px; border: 1px solid var(--b
 @media (max-width: 480px) {
   .scenario-grid, .telemetry-grid { grid-template-columns: 1fr; }
 }
+.demo-disabled-notice {
+  margin-bottom: 18px;
+  padding: 13px 16px;
+  border: 1px solid rgba(243, 200, 94, 0.32);
+  border-radius: 12px;
+  background: rgba(243, 200, 94, 0.08);
+  color: #f3c85e;
+  font-size: 12px;
+}
+
+.demo-disabled-notice a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.simulator-layout[data-disabled="true"] .panel,
+.simulator-layout[data-disabled="true"] .telemetry-grid {
+  opacity: 0.58;
+}

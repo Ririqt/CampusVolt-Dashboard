@@ -11,9 +11,9 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
     rel="stylesheet">
-  <link rel="stylesheet" href="../css/information.css?v=7">
+  <link rel="stylesheet" href="../css/information.css?v=8">
   <script type="module" src="../js/campusvolt-telemetry.js?v=7"></script>
-  <script type="module" src="../js/modules/kiosk-preferences.js"></script>
+  <script type="module" src="../js/modules/kiosk-preferences.js?v=2"></script>
   <script type="module" src="../js/information-interactions.js?v=6"></script>
 </head>
 
@@ -62,7 +62,7 @@
       <p class="page-header__subtitle">Live energy data from this kiosk, plus a quick guide to using it.</p>
     </section>
 
-    <aside class="telemetry-notice" id="telemetry-notice" aria-live="polite">
+    <aside class="telemetry-notice demo-only" id="telemetry-notice" aria-live="polite">
       <div>
         <span class="telemetry-notice__badge" id="telemetry-source-badge">Simulation</span>
         <strong id="telemetry-policy-mode">Normal Mode</strong>
@@ -334,7 +334,7 @@
     </section>
 
     <!-- ================= OUTPUT LOAD TELEMETRY ================= -->
-    <section class="card output-telemetry" aria-labelledby="output-telemetry-heading">
+    <section class="card output-telemetry demo-only" aria-labelledby="output-telemetry-heading">
       <div class="output-telemetry__header">
         <div>
           <p class="output-telemetry__eyebrow">Charging output telemetry</p>

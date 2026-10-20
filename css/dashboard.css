@@ -627,3 +627,6 @@
         transition: none;
       }
     }
+html[data-demo-mode="off"] .demo-only {
+  display: none !important;
+}
