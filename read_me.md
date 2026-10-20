@@ -283,13 +283,13 @@ active session load + requested port allowance <= current mode limit
 
 Requested allowances are:
 
-| Port type | Allowance |
-|---|---:|
-| AC outlet | 150 W |
-| USB Type-C | 65 W |
-| Micro USB | 12 W |
-| Lightning | 20 W |
-| Wireless | 15 W |
+| Port type      | Allowance |
+|----------------|-----------|
+| AC outlet      | 150 W     |
+| USB Type-C     | 65 W      |
+| Micro USB      | 12 W      |
+| Lightning      | 20 W      |
+| Wireless       | 15 W      |
 
 This is intentionally conservative: the admission check reserves the port's possible demand, while the live session telemetry displays the current simulated draw.
 
@@ -316,17 +316,17 @@ The shared policy is recalculated whenever saved telemetry is loaded or changed.
 
 The program currently stores its state only in the browser. Important keys include:
 
-| Key | Purpose |
-|---|---|
-| `cv_station_telemetry_v1` | Latest station telemetry snapshot |
-| `cv_station_telemetry_history_v1` | Recent simulator history |
-| `cv_charging_sessions` | Active charging sessions and timers |
-| `cv_ports_status` | Saved port statuses |
-| `cv_charging_stats` | Current day's device and energy totals |
-| `campusvolt-weather-v1` | Cached Open-Meteo response |
-| `cv_font_scale` | Text-size preference |
-| `cv_brightness` | Brightness preference |
-| `cv_language` | English/Filipino preference |
+| Key                               | Purpose                                |
+|-----------------------------------|----------------------------------------|
+| `cv_station_telemetry_v1`         | Latest station telemetry snapshot      |
+| `cv_station_telemetry_history_v1` | Recent simulator history               |
+| `cv_charging_sessions`            | Active charging sessions and timers    |
+| `cv_ports_status`                 | Saved port statuses                    |
+| `cv_charging_stats`               | Current day's device and energy totals |
+| `campusvolt-weather-v1`           | Cached Open-Meteo response             |
+| `cv_font_scale`                   | Text-size preference                   |
+| `cv_brightness`                   | Brightness preference                  |
+| `cv_language`                     | English/Filipino preference            |
 
 Clearing browser site data resets the saved demonstration state.
 
