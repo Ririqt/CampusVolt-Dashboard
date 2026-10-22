@@ -1,4 +1,5 @@
-import { kioskPreferences } from "./modules/kiosk-preferences.js?v=2";
+import { kioskPreferences } from "./modules/kiosk-preferences.js?v=3";
+import { requestDemoAuthorization } from "./modules/demo-auth.js?v=1";
 import { telemetryStore } from "./modules/telemetry-store.js?v=4";
 import { SIMULATION_SCENARIOS, TelemetrySimulator } from "./modules/telemetry-simulator.js";
 
@@ -213,3 +214,9 @@ simulator.setInputs({ solarPowerW: initial.solar.powerW, loadPowerW: initial.loa
 if (initial.system.running && kioskPreferences.isDemoModeEnabled()) simulator.start(initial.system.speed);
 render(telemetryStore.getSnapshot());
 applyDemoAvailability();
+if (!kioskPreferences.isDemoModeEnabled()) {
+  requestDemoAuthorization().then((authorized) => {
+    if (authorized) kioskPreferences.setDemoMode(true);
+    applyDemoAvailability();
+  });
+}

@@ -550,6 +550,35 @@
 
 
     @media (max-width: 960px) {
+      .station-strip {
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 14px 18px;
+      }
+
+      .station-strip__identity {
+        align-items: flex-start;
+      }
+
+      .station-strip__identity p {
+        overflow: visible;
+        text-overflow: clip;
+        white-space: normal;
+        line-height: 1.4;
+      }
+
+      .station-strip__metrics {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        justify-content: flex-start;
+      }
+
+      .station-strip__control {
+        grid-column: 2;
+        grid-row: 1;
+        align-self: center;
+      }
+
       .metrics {
         grid-template-columns: 1fr;
       }
@@ -584,21 +613,6 @@
       .brand { grid-area: brand; }
       .live-pill { grid-area: live; }
       .nav-links { grid-area: links; gap: 22px; }
-
-      .station-strip {
-        grid-template-columns: 1fr auto;
-        gap: 14px;
-      }
-
-      .station-strip__metrics {
-        grid-column: 1 / -1;
-        grid-row: 2;
-      }
-
-      .station-strip__control {
-        grid-column: 2;
-        grid-row: 1;
-      }
 
       .summary {
         grid-template-columns: 1fr;

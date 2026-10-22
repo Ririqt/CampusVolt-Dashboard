@@ -5,6 +5,7 @@
  */
 
 import { i18n } from "./i18n.js";
+import { isDemoAuthorized } from "./demo-auth.js?v=1";
 
 class KioskPreferences extends EventTarget {
   constructor() {
@@ -13,12 +14,12 @@ class KioskPreferences extends EventTarget {
     this.brightness = localStorage.getItem("cv_brightness") || "auto";
     this.soundEnabled = localStorage.getItem("cv_sound") !== "false"; // default true
     this.lowBatteryAlert = localStorage.getItem("cv_low_battery") !== "false";
-    this.demoModeEnabled = localStorage.getItem("cv_demo_mode") !== "false";
+    this.demoModeEnabled = localStorage.getItem("cv_demo_mode") !== "false" && isDemoAuthorized();
 
     if (typeof window !== "undefined") {
       window.addEventListener("storage", (event) => {
         if (event.key !== "cv_demo_mode") return;
-        this.demoModeEnabled = event.newValue !== "false";
+        this.demoModeEnabled = event.newValue !== "false" && isDemoAuthorized();
         this.applyDemoMode();
         this.dispatchEvent(new CustomEvent("demo-mode-changed", {
           detail: { enabled: this.demoModeEnabled },
@@ -80,7 +81,7 @@ class KioskPreferences extends EventTarget {
   }
 
   setDemoMode(enabled) {
-    this.demoModeEnabled = Boolean(enabled);
+    this.demoModeEnabled = Boolean(enabled) && isDemoAuthorized();
     localStorage.setItem("cv_demo_mode", String(this.demoModeEnabled));
     this.applyDemoMode();
     this.dispatchEvent(new CustomEvent("demo-mode-changed", {

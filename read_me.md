@@ -44,6 +44,7 @@ The root page redirects to the Dashboard. The main pages can also be opened dire
 - Cross-page and cross-tab synchronization
 - English and Filipino interface text
 - Display brightness and text-size preferences
+- Responsive mobile layout with persistent bottom navigation and touch-sized controls
 - Information, CV, contact, and charging dialogs
 
 ### Still simulated or pending hardware integration
@@ -58,6 +59,23 @@ The root page redirects to the Dashboard. The main pages can also be opened dire
 - Cloud synchronization
 - Sound and low-battery alert output
 - Trained Edge-ML ANN inference
+
+## Mobile website
+
+The same CampusVolt URLs automatically switch to the mobile interface at viewport widths of 760 px or less. No separate mobile data or duplicate pages are required.
+
+The mobile interface includes:
+
+- A compact sticky header showing the CampusVolt brand and connection indicator
+- A persistent Dashboard, Information, Settings, and Team bottom navigation bar
+- Single-column charging ports and telemetry cards
+- Horizontally scrollable station metrics where space is limited
+- Touch-sized settings, simulator, payment, and charging controls
+- Bottom-sheet layouts for charging, telemetry, CV, contact, and password dialogs
+- Safe-area support for phones with display cutouts or home indicators
+- A layout-safe accessibility text scale that does not create horizontal page overflow
+
+The desktop interface remains active above 760 px. Mobile and desktop share the same browser storage, charging sessions, telemetry, settings, and energy-management rules.
 
 ## Tabs and pages
 
@@ -159,7 +177,9 @@ Text size, brightness, language, and the Demonstration Mode switch are functiona
 
 #### Demonstration Mode switch
 
-Demonstration Mode is enabled by default.
+Demonstration Mode is password-protected and disabled until it is authorized for the current browser session. Enabling the Settings toggle or opening the Simulator directly displays an authorization dialog. Turning Demonstration Mode off revokes the session authorization and requires the password again the next time it is enabled.
+
+The browser verifies a SHA-256 digest rather than storing the demonstration password as visible text. This is an appropriate kiosk/demo deterrent, but because the application is entirely client-side, it is not a substitute for server-side authentication when protecting sensitive or production systems.
 
 When it is **On**:
 
@@ -365,6 +385,8 @@ html/settings.html                Kiosk preferences and demo tools
 html/team.html                    Team profiles and contact interface
 html/simulator.html               Hardware-independent simulator
 
+css/mobile.css                    Shared responsive mobile interface
+
 js/campusvolt-dashboard.js        Dashboard telemetry display
 js/campusvolt-telemetry.js        Information telemetry and weather
 js/simulator-page.js              Simulator UI and CSV export
@@ -380,6 +402,7 @@ js/modules/charging-modal.js      Payment and charging dialogs
 js/modules/ports-renderer.js      Charging-card rendering
 js/modules/ports-config.js        Port and pricing configuration
 js/modules/kiosk-preferences.js   Display preferences
+js/modules/demo-auth.js           Demonstration password authorization
 js/modules/i18n.js                English and Filipino text
 ```
 
