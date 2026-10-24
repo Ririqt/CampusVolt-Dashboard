@@ -6,5 +6,6 @@ Figma/
 .DS_Store
 Thumbs.db
 *.tmp
+.campusvolt-state.json
 .vscode/
 .idea/

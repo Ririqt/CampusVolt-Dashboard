@@ -6,27 +6,50 @@ The dashboard is usable without the physical ESP32. Battery, solar, BMS, output-
 
 ## Running the program
 
-This is a static HTML, CSS, and JavaScript project. It should be served through HTTP because it uses JavaScript modules.
+The included Python server serves the site and keeps charging-port sessions synchronized across devices.
 
 From the project directory, run:
 
 ```powershell
-python -m http.server 8000
+python server.py
 ```
 
 Then open:
 
 ```text
-http://localhost:8000
+http://localhost:5500
 ```
 
 The root page redirects to the Dashboard. The main pages can also be opened directly:
 
-- Dashboard: `http://localhost:8000/html/dashboard.html`
-- Information: `http://localhost:8000/html/information.html`
-- Settings: `http://localhost:8000/html/settings.html`
-- Team: `http://localhost:8000/html/team.html`
-- Telemetry Simulator: `http://localhost:8000/html/simulator.html`
+- Dashboard: `http://localhost:5500/html/dashboard.html`
+- Information: `http://localhost:5500/html/information.html`
+- Settings: `http://localhost:5500/html/settings.html`
+- Team: `http://localhost:5500/html/team.html`
+- Telemetry Simulator: `http://localhost:5500/html/simulator.html`
+
+For another phone or computer on the same Wi-Fi, open `http://YOUR-COMPUTER-IP:5500`.
+The firewall may ask you to allow Python on private networks the first time.
+
+### Vercel deployment and shared channel status
+
+The `/api/sessions` Vercel Function stores each active channel in Upstash Redis.
+This makes one authoritative channel state available to the desktop and mobile
+dashboard across every browser and device. Redis reservations expire when their
+charging duration ends, and an atomic reservation prevents two visitors from
+claiming the same channel.
+
+Before deploying:
+
+1. Open the Vercel project and go to **Infrastructure → Storage**.
+2. Create an **Upstash Redis** database and connect it to this project.
+3. Confirm Vercel added `UPSTASH_REDIS_REST_URL` and
+   `UPSTASH_REDIS_REST_TOKEN` to the project environments.
+4. Redeploy the project; environment-variable changes do not affect an older
+   deployment.
+
+You may optionally set `CAMPUSVOLT_STATION_ID` (default: `station-01`) so
+multiple physical CampusVolt stations use separate channel keys.
 
 ## Program status
 
@@ -41,7 +64,7 @@ The root page redirects to the Dashboard. The main pages can also be opened dire
 - Safety overrides and charging-access restrictions
 - Predefined hardware-independent test scenarios
 - Telemetry history chart and CSV export
-- Cross-page and cross-tab synchronization
+- Cross-page, cross-tab, and cross-device charging-session synchronization
 - English and Filipino interface text
 - Display brightness and text-size preferences
 - Responsive mobile layout with persistent bottom navigation and touch-sized controls

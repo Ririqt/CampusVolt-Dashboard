@@ -10,6 +10,8 @@ import { PORT_CATEGORIES, PRICING_CONFIG } from "./ports-config.js";
 const STORAGE_KEY_SESSIONS = "cv_charging_sessions";
 const STORAGE_KEY_PORTS = "cv_ports_status";
 const STORAGE_KEY_STATS = "cv_charging_stats";
+const SHARED_SESSIONS_URL = "/api/sessions";
+const SHARED_SYNC_INTERVAL_MS = 3000;
 
 function getLocalDateKey(timestamp = Date.now()) {
   const date = new Date(timestamp);
@@ -31,9 +33,32 @@ class PortsStateManager extends EventTarget {
     this.devicesChargedCount = 0;
     this.totalEnergyDeliveredKWh = 0;
     this.channel = null;
+    this.sharedSyncAvailable = null;
+    this.sharedSyncTimer = null;
 
     this._initializePorts();
     this._setupGlobalListeners();
+    this._setupSharedSync();
+  }
+
+  _setupSharedSync() {
+    if (typeof window === "undefined" || typeof fetch === "undefined") return;
+    this._syncFromServer();
+    this.sharedSyncTimer = setInterval(() => this._syncFromServer(), SHARED_SYNC_INTERVAL_MS);
+  }
+
+  async _syncFromServer() {
+    try {
+      const response = await fetch(SHARED_SESSIONS_URL, { cache: "no-store" });
+      if (!response.ok) throw new Error(`Shared sync returned ${response.status}`);
+      const payload = await response.json();
+      if (!Array.isArray(payload.sessions)) throw new Error("Invalid shared session data");
+      this.sharedSyncAvailable = true;
+      localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(payload.sessions));
+      this._syncFromExternalStorage();
+    } catch (error) {
+      this.sharedSyncAvailable = false;
+    }
   }
 
   _initializePorts() {
@@ -550,11 +575,46 @@ class PortsStateManager extends EventTarget {
   /**
    * Start a charging session on a port
    */
-  startSession(portId, durationMinutes, method = "Cash", device = "Phone") {
+  async startSession(portId, durationMinutes, method = "Cash", device = "Phone") {
     this._ensureCurrentDay();
     const port = this.getPort(portId);
     if (!port) {
       throw new Error(`Port "${portId}" not found.`);
+    }
+
+    // The shared API is authoritative even after a temporary polling failure.
+    if (typeof fetch === "function") {
+      const response = await fetch(SHARED_SESSIONS_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          portId,
+          portName: port.name,
+          portType: port.type,
+          spec: port.spec,
+          durationMinutes,
+          method,
+          device,
+        }),
+      });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        if (Array.isArray(payload.sessions)) {
+          localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(payload.sessions));
+          this._syncFromExternalStorage();
+        }
+        throw new Error(payload.error || "Unable to reserve this port.");
+      }
+      this.sharedSyncAvailable = true;
+      const serverSession = payload.session;
+      port.status = "in-use";
+      const session = { ...serverSession, timerId: null };
+      this.activeSessions.set(portId, session);
+      this.devicesChargedCount++;
+      this._saveToStorage();
+      this._dispatch("port-status-changed", { port, session });
+      this._startSessionTimer(session);
+      return session;
     }
 
     port.status = "in-use";
@@ -591,7 +651,7 @@ class PortsStateManager extends EventTarget {
   /**
    * Complete or stop a charging session
    */
-  completeSession(portId, naturalFinish = false) {
+  async completeSession(portId, naturalFinish = false) {
     const session = this.activeSessions.get(portId);
     if (session) {
       clearInterval(session.timerId);
@@ -608,6 +668,19 @@ class PortsStateManager extends EventTarget {
       this._saveToStorage();
       this._dispatch("port-status-changed", { port, session: null });
       this._dispatch("session-completed", { port, session, naturalFinish });
+    }
+
+    if (typeof fetch === "function") {
+      try {
+        const response = await fetch(SHARED_SESSIONS_URL, {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ portId }),
+        });
+        if (!response.ok) throw new Error(`Shared release returned ${response.status}`);
+      } catch (error) {
+        console.warn("CampusVolt: Could not release the shared port", error);
+      }
     }
   }
 

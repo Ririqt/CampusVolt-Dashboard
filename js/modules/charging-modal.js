@@ -610,16 +610,28 @@ export class ChargingModal {
       e.stopPropagation();
       this.showConfirmStep();
     });
-    this.dialog.querySelector("#start-charging-btn")?.addEventListener("click", (e) => {
+    this.dialog.querySelector("#start-charging-btn")?.addEventListener("click", async (e) => {
       e.stopPropagation();
-      const session = this.state.startSession(
-        this.currentPort.id,
-        this.selectedDuration,
-        this.selectedMethod,
-        "Phone"
-      );
-      this.activeSession = session;
-      this.showChargingStep(session);
+      const button = e.currentTarget;
+      button.disabled = true;
+      button.textContent = "Reserving port...";
+      try {
+        const session = await this.state.startSession(
+          this.currentPort.id,
+          this.selectedDuration,
+          this.selectedMethod,
+          "Phone"
+        );
+        this.activeSession = session;
+        this.showChargingStep(session);
+      } catch (error) {
+        button.disabled = false;
+        button.textContent = error.message || "Unable to reserve port";
+        button.title = error.message || "Unable to reserve port";
+        if (/already in use/i.test(error.message || "")) {
+          setTimeout(() => this.close(), 1800);
+        }
+      }
     });
   }
 
