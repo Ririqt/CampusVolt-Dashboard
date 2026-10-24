@@ -9,8 +9,10 @@ connected dashboards see the same port availability.
 from __future__ import annotations
 
 import argparse
+import hmac
 import json
 import mimetypes
+import os
 import threading
 import time
 from http import HTTPStatus
@@ -30,23 +32,34 @@ PORT_IDS = {
     "wireless-pad",
 }
 STATE_LOCK = threading.RLock()
+HARDWARE_TTL_MS = 30_000
+STATION_ID = os.environ.get("CAMPUSVOLT_STATION_ID", "station-01")
+STATION_API_KEY = os.environ.get("CAMPUSVOLT_STATION_API_KEY", "")
+
+
+def _load_state() -> dict:
+    try:
+        payload = json.loads(STATE_FILE.read_text(encoding="utf-8"))
+        return payload if isinstance(payload, dict) else {}
+    except (FileNotFoundError, json.JSONDecodeError, OSError):
+        return {}
+
+
+def _save_state(payload: dict) -> None:
+    temporary = STATE_FILE.with_suffix(".tmp")
+    temporary.write_text(json.dumps(payload, indent=2), encoding="utf-8")
+    temporary.replace(STATE_FILE)
 
 
 def _load_sessions() -> list[dict]:
-    try:
-        payload = json.loads(STATE_FILE.read_text(encoding="utf-8"))
-        sessions = payload.get("sessions", [])
-        return sessions if isinstance(sessions, list) else []
-    except (FileNotFoundError, json.JSONDecodeError, OSError):
-        return []
+    sessions = _load_state().get("sessions", [])
+    return sessions if isinstance(sessions, list) else []
 
 
 def _save_sessions(sessions: list[dict]) -> None:
-    temporary = STATE_FILE.with_suffix(".tmp")
-    temporary.write_text(
-        json.dumps({"sessions": sessions}, indent=2), encoding="utf-8"
-    )
-    temporary.replace(STATE_FILE)
+    payload = _load_state()
+    payload["sessions"] = sessions
+    _save_state(payload)
 
 
 def _active_sessions() -> list[dict]:
@@ -61,6 +74,37 @@ def _active_sessions() -> list[dict]:
     if len(active) != len(sessions):
         _save_sessions(active)
     return active
+
+
+def _hardware_status() -> dict:
+    hardware = _load_state().get("hardware", {})
+    updated_at = int(hardware.get("updatedAt", 0)) if isinstance(hardware, dict) else 0
+    online = bool(updated_at and int(time.time() * 1000) - updated_at <= HARDWARE_TTL_MS)
+    channels = {}
+    for port_id in PORT_IDS:
+        source = hardware.get("channels", {}).get(port_id, {}) if online else {}
+        channels[port_id] = {
+            "inUse": bool(source.get("inUse", False)),
+            "watts": max(0, float(source.get("watts", 0) or 0)),
+            "voltageV": max(0, float(source.get("voltageV", 0) or 0)),
+            "currentA": max(0, float(source.get("currentA", 0) or 0)),
+            "relayOn": bool(source.get("relayOn", False)),
+            "fault": str(source.get("fault"))[:80] if source.get("fault") else None,
+        }
+    return {
+        "online": online,
+        "stationId": STATION_ID,
+        "updatedAt": updated_at if online else None,
+        "firmwareVersion": str(hardware.get("firmwareVersion", "unknown"))[:40] if online else None,
+        "rssi": hardware.get("rssi") if online else None,
+        "channels": channels,
+    }
+
+
+def _save_hardware(hardware: dict) -> None:
+    payload = _load_state()
+    payload["hardware"] = hardware
+    _save_state(payload)
 
 
 class CampusVoltHandler(SimpleHTTPRequestHandler):
@@ -96,12 +140,19 @@ class CampusVoltHandler(SimpleHTTPRequestHandler):
     def do_GET(self) -> None:
         if urlparse(self.path).path == "/api/sessions":
             with STATE_LOCK:
-                self._send_json(HTTPStatus.OK, {"sessions": _active_sessions()})
+                self._send_json(
+                    HTTPStatus.OK,
+                    {"stationId": STATION_ID, "sessions": _active_sessions(), "station": _hardware_status()},
+                )
             return
         super().do_GET()
 
     def do_POST(self) -> None:
-        if urlparse(self.path).path != "/api/sessions":
+        path = urlparse(self.path).path
+        if path == "/api/station-status":
+            self._handle_station_status()
+            return
+        if path != "/api/sessions":
             self.send_error(HTTPStatus.NOT_FOUND)
             return
 
@@ -117,6 +168,13 @@ class CampusVoltHandler(SimpleHTTPRequestHandler):
 
         with STATE_LOCK:
             sessions = _active_sessions()
+            hardware_channel = _hardware_status()["channels"].get(port_id, {})
+            if hardware_channel.get("inUse") or hardware_channel.get("fault"):
+                self._send_json(
+                    HTTPStatus.CONFLICT,
+                    {"error": "Station sensors report that this channel is unavailable.", "sessions": sessions, "station": _hardware_status()},
+                )
+                return
             if any(session["portId"] == port_id for session in sessions):
                 self._send_json(
                     HTTPStatus.CONFLICT,
@@ -145,6 +203,53 @@ class CampusVoltHandler(SimpleHTTPRequestHandler):
             sessions.append(session)
             _save_sessions(sessions)
             self._send_json(HTTPStatus.CREATED, {"session": session, "sessions": sessions})
+
+    def _handle_station_status(self) -> None:
+        if not STATION_API_KEY:
+            self._send_json(HTTPStatus.SERVICE_UNAVAILABLE, {"error": "CAMPUSVOLT_STATION_API_KEY is not configured."})
+            return
+        authorization = self.headers.get("Authorization", "")
+        bearer = authorization[7:] if authorization.startswith("Bearer ") else ""
+        supplied_key = self.headers.get("X-CampusVolt-Key", "") or bearer
+        if not supplied_key or not hmac.compare_digest(supplied_key, STATION_API_KEY):
+            self._send_json(HTTPStatus.UNAUTHORIZED, {"error": "Invalid station credentials."})
+            return
+
+        try:
+            request = self._read_json()
+            if request.get("stationId") and str(request["stationId"]) != STATION_ID:
+                self._send_json(HTTPStatus.CONFLICT, {"error": f"This endpoint is configured for {STATION_ID}."})
+                return
+            channels = {}
+            supplied_channels = request.get("channels", {})
+            for port_id in PORT_IDS:
+                source = supplied_channels.get(port_id, {}) if isinstance(supplied_channels, dict) else {}
+                watts = min(500, max(0, float(source.get("watts", 0) or 0)))
+                channels[port_id] = {
+                    "inUse": bool(source.get("inUse", watts >= 1)),
+                    "watts": watts,
+                    "voltageV": min(300, max(0, float(source.get("voltageV", 0) or 0))),
+                    "currentA": min(20, max(0, float(source.get("currentA", 0) or 0))),
+                    "relayOn": bool(source.get("relayOn", False)),
+                    "fault": str(source.get("fault"))[:80] if source.get("fault") else None,
+                }
+        except (ValueError, TypeError, json.JSONDecodeError) as error:
+            self._send_json(HTTPStatus.BAD_REQUEST, {"error": str(error)})
+            return
+
+        hardware = {
+            "stationId": STATION_ID,
+            "updatedAt": int(time.time() * 1000),
+            "firmwareVersion": str(request.get("firmwareVersion", "unknown"))[:40],
+            "rssi": request.get("rssi"),
+            "channels": channels,
+        }
+        with STATE_LOCK:
+            _save_hardware(hardware)
+        self._send_json(
+            HTTPStatus.ACCEPTED,
+            {"accepted": True, "heartbeatTtlSeconds": HARDWARE_TTL_MS // 1000, "station": _hardware_status()},
+        )
 
     def do_DELETE(self) -> None:
         path = unquote(urlparse(self.path).path)

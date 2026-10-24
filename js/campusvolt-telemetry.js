@@ -1,5 +1,5 @@
 // CampusVolt Station Telemetry Controller (Information Page)
-import { portsState } from "./modules/ports-state.js?v=2";
+import { portsState } from "./modules/ports-state.js?v=3";
 import { telemetryStore } from "./modules/telemetry-store.js?v=4";
 import { kioskPreferences } from "./modules/kiosk-preferences.js?v=3";
 
@@ -78,10 +78,16 @@ function renderStationTelemetry(snapshot) {
 
   const statusName = document.getElementById("connection-name");
   const statusDot = document.getElementById("connection-dot");
-  if (statusName) statusName.textContent = kioskPreferences.isDemoModeEnabled()
-    ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
-    : "Local interface";
-  if (statusDot) statusDot.classList.toggle("live-pill__dot--offline", !system.bmsConnected);
+  const hardware = portsState.getHardwareStatus();
+  if (statusName) statusName.textContent = hardware.online
+    ? `${hardware.stationId} online`
+    : (kioskPreferences.isDemoModeEnabled()
+      ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
+      : "Station offline");
+  if (statusDot) statusDot.classList.toggle(
+    "live-pill__dot--offline",
+    hardware.online ? false : !system.bmsConnected,
+  );
 }
 
 // 1. Sync live ports state with Information page overview strip
@@ -104,10 +110,15 @@ const updatePortsTelemetry = () => {
   text("output-dc-current-value", output.dc.currentA.toFixed(2));
   text("output-dc-power-value", output.dc.powerW.toFixed(1));
   const demoModeEnabled = kioskPreferences.isDemoModeEnabled();
-  text("output-telemetry-source", demoModeEnabled ? "Live session simulation" : "Charging output monitor");
+  const hardwareOnline = portsState.getHardwareStatus().online;
+  text("output-telemetry-source", hardwareOnline
+    ? "ESP32 station sensors"
+    : (demoModeEnabled ? "Live session simulation" : "Charging output monitor"));
   text(
     "output-telemetry-note",
-    demoModeEnabled
+    hardwareOnline
+      ? "Live readings reported by the station controller. Channel availability follows the latest sensor heartbeat."
+      : demoModeEnabled
       ? "Values respond to the ports currently in use and each session's power draw. Gentle load variation is simulated; the hardware build will replace it with PZEM-004T and DC sensor readings."
       : "Output readings remain available in the standard interface. PZEM-004T and DC sensor readings will replace the current session-based values when the ESP32 hardware is connected."
   );
@@ -121,6 +132,10 @@ portsState.addEventListener("session-tick", updatePortsTelemetry);
 portsState.addEventListener("session-completed", updatePortsTelemetry);
 portsState.addEventListener("ports-synced", updatePortsTelemetry);
 portsState.addEventListener("daily-stats-changed", updatePortsTelemetry);
+portsState.addEventListener("station-hardware-changed", () => {
+  renderStationTelemetry(telemetryStore.getSnapshot());
+  updatePortsTelemetry();
+});
 
 renderStationTelemetry(telemetryStore.getSnapshot());
 telemetryStore.addEventListener("telemetry-changed", (event) => renderStationTelemetry(event.detail.snapshot));

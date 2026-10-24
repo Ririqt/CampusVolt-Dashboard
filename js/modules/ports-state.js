@@ -35,6 +35,14 @@ class PortsStateManager extends EventTarget {
     this.channel = null;
     this.sharedSyncAvailable = null;
     this.sharedSyncTimer = null;
+    this.hardwareState = {
+      online: false,
+      stationId: "station-01",
+      updatedAt: null,
+      firmwareVersion: null,
+      rssi: null,
+      channels: {},
+    };
 
     this._initializePorts();
     this._setupGlobalListeners();
@@ -56,9 +64,47 @@ class PortsStateManager extends EventTarget {
       this.sharedSyncAvailable = true;
       localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(payload.sessions));
       this._syncFromExternalStorage();
+      this._applyHardwareState(payload.station);
     } catch (error) {
       this.sharedSyncAvailable = false;
     }
+  }
+
+  _applyHardwareState(station) {
+    const nextState = {
+      online: Boolean(station?.online),
+      stationId: String(station?.stationId || "station-01"),
+      updatedAt: Number(station?.updatedAt) || null,
+      firmwareVersion: station?.firmwareVersion || null,
+      rssi: station?.rssi !== null && station?.rssi !== undefined && Number.isFinite(Number(station.rssi))
+        ? Number(station.rssi)
+        : null,
+      channels: station?.channels && typeof station.channels === "object" ? station.channels : {},
+    };
+    const previousSignature = JSON.stringify(this.hardwareState);
+    this.hardwareState = nextState;
+
+    for (const port of this.ports.values()) {
+      const shouldBeInUse = this.activeSessions.has(port.id) || this._isHardwareInUse(port.id);
+      const nextStatus = shouldBeInUse ? "in-use" : "available";
+      if (port.status !== nextStatus) {
+        port.status = nextStatus;
+        this._dispatch("port-status-changed", {
+          port,
+          session: this.getSession(port.id),
+          hardware: this.getHardwareChannel(port.id),
+        });
+      }
+    }
+
+    if (previousSignature !== JSON.stringify(nextState)) {
+      this._dispatch("station-hardware-changed", { station: this.getHardwareStatus() });
+    }
+  }
+
+  _isHardwareInUse(portId) {
+    const channel = this.hardwareState.channels?.[portId];
+    return Boolean(this.hardwareState.online && (channel?.inUse || channel?.fault));
   }
 
   _initializePorts() {
@@ -112,7 +158,7 @@ class PortsStateManager extends EventTarget {
           this._startSessionTimer(session);
         } else {
           // Finished while away on other section or tab
-          port.status = "available";
+          port.status = this._isHardwareInUse(sessionData.portId) ? "in-use" : "available";
           if (!hasCurrentDayStats && getLocalDateKey(sessionData.startTime) === this.statsDateKey) {
             this.devicesChargedCount++;
           }
@@ -274,7 +320,7 @@ class PortsStateManager extends EventTarget {
         this.activeSessions.delete(portId);
         const port = this.getPort(portId);
         if (port) {
-          port.status = "available";
+          port.status = this._isHardwareInUse(portId) ? "in-use" : "available";
           this._dispatch("port-status-changed", { port, session: null });
         }
       }
@@ -303,7 +349,7 @@ class PortsStateManager extends EventTarget {
         }
         this._dispatch("port-status-changed", { port, session });
       } else {
-        port.status = "available";
+        port.status = this._isHardwareInUse(sessionData.portId) ? "in-use" : "available";
       }
     }
 
@@ -418,7 +464,7 @@ class PortsStateManager extends EventTarget {
   _repairOrphanedPortStates(dispatchChanges = false) {
     let changed = false;
     for (const port of this.ports.values()) {
-      if (port.status !== "in-use" || this.activeSessions.has(port.id)) continue;
+      if (port.status !== "in-use" || this.activeSessions.has(port.id) || this._isHardwareInUse(port.id)) continue;
       port.status = "available";
       changed = true;
       if (dispatchChanges) {
@@ -492,6 +538,49 @@ class PortsStateManager extends EventTarget {
       else dcPowerW += liveWatts;
     }
 
+    if (this.hardwareState.online) {
+      acPowerW = 0;
+      dcPowerW = 0;
+      nominalDemandW = 0;
+      let measuredAcVoltage = 0;
+      let measuredDcVoltage = 0;
+      let measuredAcCurrent = 0;
+      let measuredDcCurrent = 0;
+
+      for (const [portId, channel] of Object.entries(this.hardwareState.channels)) {
+        const port = this.getPort(portId);
+        if (!port) continue;
+        const watts = Math.max(0, Number(channel.watts) || 0);
+        nominalDemandW += watts;
+        if (port.type === "outlet") {
+          acPowerW += watts;
+          measuredAcVoltage = Math.max(measuredAcVoltage, Number(channel.voltageV) || 0);
+          measuredAcCurrent += Math.max(0, Number(channel.currentA) || 0);
+        } else {
+          dcPowerW += watts;
+          measuredDcVoltage = Math.max(measuredDcVoltage, Number(channel.voltageV) || 0);
+          measuredDcCurrent += Math.max(0, Number(channel.currentA) || 0);
+        }
+      }
+
+      return {
+        source: "station-hardware",
+        activeChannels: Object.values(this.hardwareState.channels).filter(channel => channel?.inUse).length,
+        demandPowerW: nominalDemandW,
+        totalPowerW: acPowerW + dcPowerW,
+        ac: {
+          voltageV: measuredAcVoltage,
+          currentA: measuredAcCurrent,
+          powerW: acPowerW,
+        },
+        dc: {
+          voltageV: measuredDcVoltage,
+          currentA: measuredDcCurrent,
+          powerW: dcPowerW,
+        },
+      };
+    }
+
     const totalPowerW = acPowerW + dcPowerW;
     const acVoltageV = acPowerW > 0
       ? 220 - Math.min(2.5, acPowerW * 0.008) + Math.sin(timestamp / 4200) * 0.35
@@ -544,6 +633,19 @@ class PortsStateManager extends EventTarget {
    */
   getSession(portId) {
     return this.activeSessions.get(portId) || null;
+  }
+
+  getHardwareChannel(portId) {
+    if (!this.hardwareState.online) return null;
+    const channel = this.hardwareState.channels?.[portId];
+    return channel ? { ...channel } : null;
+  }
+
+  getHardwareStatus() {
+    return {
+      ...this.hardwareState,
+      channels: { ...this.hardwareState.channels },
+    };
   }
 
   /**
@@ -603,6 +705,7 @@ class PortsStateManager extends EventTarget {
           localStorage.setItem(STORAGE_KEY_SESSIONS, JSON.stringify(payload.sessions));
           this._syncFromExternalStorage();
         }
+        if (payload.station) this._applyHardwareState(payload.station);
         throw new Error(payload.error || "Unable to reserve this port.");
       }
       this.sharedSyncAvailable = true;
@@ -660,7 +763,7 @@ class PortsStateManager extends EventTarget {
 
     const port = this.getPort(portId);
     if (port) {
-      port.status = "available";
+      port.status = this._isHardwareInUse(portId) ? "in-use" : "available";
       if (session) {
         this._ensureCurrentDay();
         this.totalEnergyDeliveredKWh += this._calculateSessionEnergyForDay(session);
@@ -694,7 +797,7 @@ class PortsStateManager extends EventTarget {
     this.activeSessions.clear();
 
     for (const port of this.ports.values()) {
-      port.status = "available";
+      port.status = this._isHardwareInUse(port.id) ? "in-use" : "available";
     }
 
     if (typeof localStorage !== "undefined") {

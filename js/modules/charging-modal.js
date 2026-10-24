@@ -11,6 +11,16 @@
 import { PRICING_CONFIG } from "./ports-config.js";
 import { i18n } from "./i18n.js";
 
+function escapeHtml(value) {
+  return String(value ?? "").replace(/[&<>'"]/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    "'": "&#39;",
+    '"': "&quot;",
+  })[character]);
+}
+
 export class ChargingModal {
   constructor(state) {
     this.state = state;
@@ -82,8 +92,12 @@ export class ChargingModal {
 
     this.currentPort = port;
     const existingSession = this.state.getSession(portId);
+    const hardwareChannel = this.state.getHardwareChannel(portId);
 
-    if (port.status === "in-use" || existingSession) {
+    if ((hardwareChannel?.inUse || hardwareChannel?.fault) && !existingSession) {
+      this.activeSession = null;
+      this.showHardwareOccupiedStep(hardwareChannel);
+    } else if (port.status === "in-use" || existingSession) {
       // In-use port clicked: open overlay directly matching Screenshot 3!
       this.activeSession = existingSession || {
         portId: port.id,
@@ -107,6 +121,62 @@ export class ChargingModal {
     if (!this.dialog.open) {
       this.dialog.showModal();
     }
+  }
+
+  showHardwareOccupiedStep(channel) {
+    this.activeStep = "hardware-occupied";
+    const port = this.currentPort;
+    const station = this.state.getHardwareStatus();
+    const t = (key) => i18n.t(key);
+    const updatedTime = station.updatedAt
+      ? new Date(station.updatedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      : "--";
+    const hardwareTitle = channel.fault ? t("hardware_fault_title") : t("hardware_occupied_title");
+    const hardwareDescription = channel.fault
+      ? `${t("hardware_fault_desc")} ${escapeHtml(channel.fault)}`
+      : t("hardware_occupied_desc");
+
+    this.dialog.innerHTML = `
+      <div class="modal-card">
+        ${this._renderStepsHeader(4)}
+        <div class="modal-body modal-body--charging">
+          <div class="port-title-row">
+            <h2 class="modal-port-name">${port.name}</h2>
+            <span class="port-status-pill port-status-pill--in-use">${t("status_in_use")}</span>
+          </div>
+
+          <div class="charging-timer-display">
+            <span class="charging-timer-val charging-timer-val--hardware">${hardwareTitle}</span>
+            <span class="charging-timer-sub">${hardwareDescription}</span>
+          </div>
+
+          <div class="charging-stats-2x2">
+            <div class="charging-stat-box">
+              <span class="charging-stat-label">${t("active_power_draw")}</span>
+              <strong class="charging-stat-val">${Number(channel.watts || 0).toFixed(1)} W</strong>
+            </div>
+            <div class="charging-stat-box">
+              <span class="charging-stat-label">${t("hardware_voltage")}</span>
+              <strong class="charging-stat-val">${Number(channel.voltageV || 0).toFixed(1)} V</strong>
+            </div>
+            <div class="charging-stat-box">
+              <span class="charging-stat-label">${t("hardware_current")}</span>
+              <strong class="charging-stat-val">${Number(channel.currentA || 0).toFixed(2)} A</strong>
+            </div>
+            <div class="charging-stat-box">
+              <span class="charging-stat-label">${t("hardware_last_seen")}</span>
+              <strong class="charging-stat-val">${updatedTime}</strong>
+            </div>
+          </div>
+
+          <button type="button" class="btn--done" id="charging-done-btn">${t("active_btn_done")}</button>
+          <p class="charging-footer-note">${t("hardware_occupied_footer")}</p>
+        </div>
+      </div>
+    `;
+
+    this.dialog.querySelector("#modal-close-btn")?.addEventListener("click", () => this.close());
+    this.dialog.querySelector("#charging-done-btn")?.addEventListener("click", () => this.close());
   }
 
   close() {
@@ -768,6 +838,12 @@ export class ChargingModal {
         break;
       case "charging":
         if (this.activeSession) this.showChargingStep(this.activeSession);
+        break;
+      case "hardware-occupied":
+        if (this.currentPort) {
+          const channel = this.state.getHardwareChannel(this.currentPort.id);
+          if (channel) this.showHardwareOccupiedStep(channel);
+        }
         break;
     }
   }

@@ -3,7 +3,7 @@
  * Low-coupling coordinator wiring State, Renderer, and Modal via Event Delegation.
  */
 
-import { portsState } from "./ports-state.js?v=2";
+import { portsState } from "./ports-state.js?v=3";
 import { PortsRenderer } from "./ports-renderer.js";
 import { ChargingModal } from "./charging-modal.js";
 import { telemetryStore } from "./telemetry-store.js?v=4";
@@ -133,8 +133,7 @@ export class ChargingPortsController {
       lightning: 12,
       wireless: 8,
     };
-    const activeLoadW = Array.from(this.state.activeSessions.values())
-      .reduce((total, session) => total + (Number(session.watts) || 0), 0);
+    const activeLoadW = this.state.getLiveOutputTelemetry().totalPowerW;
     const requestedPowerW = policy.mode === "survival-eco-mode"
       ? (survivalDcAllowanceByType[port.type] || 20)
       : (ratedPowerByType[port.type] || 20);

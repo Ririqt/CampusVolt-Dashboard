@@ -77,6 +77,7 @@ export class PortsRenderer {
   _renderPortCard(port, state) {
     const isAvailable = port.status === "available";
     const session = state.getSession(port.id);
+    const hardwareChannel = state.getHardwareChannel(port.id);
     const cardStatusClass = isAvailable ? "port-card--available" : "port-card--in-use";
     const ariaRole = 'role="button" tabindex="0"';
     const ariaLabel = isAvailable 
@@ -104,7 +105,9 @@ export class PortsRenderer {
             <span class="port-pill port-pill--${port.status}" id="pill-${port.id}">
               ${statusText}
             </span>
-            ${session ? `<span class="port-card__timer-snippet" id="snippet-${port.id}">${this._formatSnippet(session.remainingSeconds)}</span>` : ""}
+            ${session
+              ? `<span class="port-card__timer-snippet" id="snippet-${port.id}">${this._formatSnippet(session.remainingSeconds)}</span>`
+              : ((hardwareChannel?.inUse || hardwareChannel?.fault) ? `<span class="port-card__timer-snippet" id="snippet-${port.id}">${hardwareChannel.fault ? i18n.t("hardware_fault") : i18n.t("hardware_sensor")}</span>` : "")}
           </div>
         </div>
 
@@ -130,6 +133,7 @@ export class PortsRenderer {
 
     const isAvailable = port.status === "available";
     const session = state.getSession(port.id);
+    const hardwareChannel = state.getHardwareChannel(port.id);
 
     // Toggle classes
     card.classList.toggle("port-card--available", isAvailable);
@@ -145,14 +149,16 @@ export class PortsRenderer {
 
     // Update timer snippet
     let snippet = document.getElementById(`snippet-${port.id}`);
-    if (session) {
+    if (session || hardwareChannel?.inUse || hardwareChannel?.fault) {
       if (!snippet) {
         snippet = document.createElement("span");
         snippet.id = `snippet-${port.id}`;
         snippet.className = "port-card__timer-snippet";
         card.querySelector(".port-card__meta")?.appendChild(snippet);
       }
-      snippet.textContent = this._formatSnippet(session.remainingSeconds);
+      snippet.textContent = session
+        ? this._formatSnippet(session.remainingSeconds)
+        : i18n.t(hardwareChannel.fault ? "hardware_fault" : "hardware_sensor");
     } else if (snippet) {
       snippet.remove();
     }

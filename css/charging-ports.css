@@ -919,6 +919,13 @@
   font-variant-numeric: tabular-nums;
 }
 
+.charging-timer-val--hardware {
+  max-width: 100%;
+  font-size: clamp(24px, 5vw, 34px);
+  line-height: 1.15;
+  text-align: center;
+}
+
 .charging-timer-sub {
   font-family: var(--cv-font-body);
   font-size: 12px;

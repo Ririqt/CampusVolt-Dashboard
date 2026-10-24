@@ -78,6 +78,16 @@ export const TRANSLATIONS = {
     active_port: "PORT",
     active_btn_done: "Done",
     active_footer_caption: "Your session ends when the timer reaches zero.",
+    hardware_occupied_title: "Physically occupied",
+    hardware_occupied_desc: "Station sensors detected an active device on this channel.",
+    hardware_voltage: "VOLTAGE",
+    hardware_current: "CURRENT",
+    hardware_last_seen: "LAST SENSOR UPDATE",
+    hardware_occupied_footer: "This channel becomes available after the station reports that the device was disconnected.",
+    hardware_sensor: "Sensor",
+    hardware_fault: "Fault",
+    hardware_fault_title: "Channel unavailable",
+    hardware_fault_desc: "Station sensor fault:",
 
     // Settings
     settings_eyebrow: "Kiosk preferences",
@@ -205,6 +215,16 @@ export const TRANSLATIONS = {
     active_port: "PORT",
     active_btn_done: "Tapos na",
     active_footer_caption: "Matatapos ang iyong sesyon kapag umabot sa zero ang timer.",
+    hardware_occupied_title: "Kasalukuyang ginagamit",
+    hardware_occupied_desc: "May aktibong device na nakita ang mga sensor ng istasyon sa channel na ito.",
+    hardware_voltage: "BOLTAHE",
+    hardware_current: "KURYENTE",
+    hardware_last_seen: "HULING UPDATE NG SENSOR",
+    hardware_occupied_footer: "Magiging available ang channel kapag iniulat ng istasyon na natanggal na ang device.",
+    hardware_sensor: "Sensor",
+    hardware_fault: "Sira",
+    hardware_fault_title: "Hindi magagamit ang channel",
+    hardware_fault_desc: "Problema sa sensor ng istasyon:",
 
     // Settings
     settings_eyebrow: "Mga kagustuhan sa kiosk",

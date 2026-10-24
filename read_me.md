@@ -51,6 +51,18 @@ Before deploying:
 You may optionally set `CAMPUSVOLT_STATION_ID` (default: `station-01`) so
 multiple physical CampusVolt stations use separate channel keys.
 
+### Physical station heartbeat
+
+The hardware endpoint is `POST /api/station-status`. Add a private
+`CAMPUSVOLT_STATION_API_KEY` environment variable in Vercel, redeploy, and
+configure the same key in the ESP32 firmware. The ESP32 sends a complete sensor
+snapshot every 10 seconds and whenever a channel changes. Hardware state
+expires after 30 seconds without a heartbeat so stale readings are not shown as
+live.
+
+See `docs/ESP32_STATION_API.md` for the payload, authentication, sensor adapter
+contract, safety requirements, and the pre-hardware test script.
+
 ## Program status
 
 ### Implemented in the browser
@@ -72,14 +84,13 @@ multiple physical CampusVolt stations use separate channel keys.
 
 ### Still simulated or pending hardware integration
 
-- ESP32 connection and firmware
+- ESP32 firmware and final sensor/pin adapters (cloud endpoint is ready)
 - `CampusVolt-AP` Wi-Fi access point
 - Gentai BMS Bluetooth data
-- PZEM-004T AC measurements
-- DC voltage/current sensor measurements
+- Physical PZEM-004T and DC sensor installation/calibration
 - Physical relay switching
 - Real coin acceptor and GCash verification
-- Cloud synchronization
+- Physical station deployment and heartbeat monitoring
 - Sound and low-battery alert output
 - Trained Edge-ML ANN inference
 
@@ -429,14 +440,15 @@ js/modules/demo-auth.js           Demonstration password authorization
 js/modules/i18n.js                English and Filipino text
 ```
 
-## Connecting the real ESP32 later
+## Connecting the real ESP32
 
-The browser demonstration does not automatically communicate with an ESP32. Integration still requires:
+The dashboard and Vercel API now accept authenticated ESP32 heartbeats. Final
+hardware integration requires:
 
 1. ESP32 firmware that reads the BMS and electrical sensors.
-2. A local HTTP/WebSocket API with an agreed telemetry schema.
+2. Sensor adapters that emit the `docs/ESP32_STATION_API.md` schema.
 3. Optional ESP32 SoftAP setup for `CampusVolt-AP`.
-4. A dashboard transport adapter that replaces simulator updates with ESP32 messages.
+4. The station API key provisioned in Vercel and the ESP32.
 5. Relay-command acknowledgements and fail-safe handling.
 6. Real sent, received, and displayed timestamps for latency testing.
 7. Authentication and input validation for control commands.
@@ -448,8 +460,8 @@ A practical final architecture is:
 Gentai BMS / sensors
         ↓
       ESP32
-        ↓  local HTTP or WebSocket
-Telemetry store
+        ↓  authenticated HTTPS heartbeat
+Vercel Function → Upstash Redis
         ↓
 Dashboard + Information + logging
 ```
@@ -458,11 +470,10 @@ The Gentai BMS can be the operational battery-data source, while a calibrated sh
 
 ## Important limitations
 
-- Dashboard values are not physical measurements yet.
+- Dashboard values become physical measurements while authenticated ESP32 heartbeats are online.
 - Simulated GCash confirmation is not payment-provider verification.
 - The weather API is live, but its result is not yet the automatic control input.
-- `CampusVolt-AP` and cloud synchronization are UI placeholders.
-- Local browser storage is not a multi-device database.
+- `CampusVolt-AP` remains a UI placeholder until configured in firmware.
 - Daily device totals count sessions, not unique device identities.
 - The rule-based baseline should not be reported as ANN accuracy.
 - Physical electrical safety and efficiency must be verified using the completed hardware and calibrated instruments.

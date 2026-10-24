@@ -1,5 +1,6 @@
 // CampusVolt Dashboard Main Controller
-import { initChargingPorts } from "./modules/charging-controller.js?v=4";
+import { initChargingPorts } from "./modules/charging-controller.js?v=5";
+import { portsState } from "./modules/ports-state.js?v=3";
 import { kioskPreferences } from "./modules/kiosk-preferences.js?v=3";
 import { telemetryStore } from "./modules/telemetry-store.js?v=4";
 
@@ -22,6 +23,7 @@ function renderStationStatus(snapshot) {
   const policyReason = document.getElementById("dashboard-policy-reason");
   const connectionName = document.getElementById("connection-name");
   const connectionDot = document.getElementById("connection-dot");
+  const hardware = portsState.getHardwareStatus();
 
   if (source) source.textContent = snapshot.source === "simulation" ? "Simulation" : titleCase(snapshot.source);
   if (policyMode) policyMode.textContent = titleCase(energyManagement.mode);
@@ -41,12 +43,18 @@ function renderStationStatus(snapshot) {
   if (forecast) forecast.textContent = titleCase(weather.forecast);
   if (latency) latency.textContent = system.latencyMs;
   if (source) source.title = `${system.messageId} · updated ${new Date(system.updatedAt).toLocaleTimeString()}`;
-  if (connectionName) connectionName.textContent = kioskPreferences.isDemoModeEnabled()
-    ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
-    : "Local interface";
-  if (connectionDot) connectionDot.classList.toggle("live-pill__dot--offline", !system.bmsConnected);
+  if (connectionName) connectionName.textContent = hardware.online
+    ? `${hardware.stationId} online`
+    : (kioskPreferences.isDemoModeEnabled()
+      ? (system.bmsConnected ? "Demo telemetry" : "BMS disconnected")
+      : "Station offline");
+  if (connectionDot) connectionDot.classList.toggle(
+    "live-pill__dot--offline",
+    hardware.online ? false : !system.bmsConnected,
+  );
 }
 
 renderStationStatus(telemetryStore.getSnapshot());
 telemetryStore.addEventListener("telemetry-changed", (event) => renderStationStatus(event.detail.snapshot));
 kioskPreferences.addEventListener("demo-mode-changed", () => renderStationStatus(telemetryStore.getSnapshot()));
+portsState.addEventListener("station-hardware-changed", () => renderStationStatus(telemetryStore.getSnapshot()));
